@@ -481,6 +481,11 @@ class GA:
                             nextoff.append({'Gene': crossoff2})
                     else:
                         nextoff.extend(offspring)
+                
+                #the predicted best individual by inside GA are added to the population
+                self.pop.append(self.bestindividual_in)
+                self.pop.append(self.best_ind_in)
+                popsize += 2
             else:
                 nextoff = self.pop
 
@@ -599,10 +604,6 @@ class GA:
     
                 if self.best_ind_in['fitness'] > self.bestindividual_in['fitness']:
                     self.bestindividual_in = self.best_ind_in
-            
-            self.pop.append(self.bestindividual_in)
-            self.pop.append(self.best_ind_in)
-            popsize += 2
 
             self.log_export_file.write("Best individual in inside GA found is {}, {}".format(self.bestindividual_in['Gene'].data,
                                                                         self.bestindividual_in['fitness']) + '\n')
