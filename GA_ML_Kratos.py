@@ -347,12 +347,23 @@ class GA:
             aim_path_and_name = os.path.join(os.getcwd(),'Generated_kratos_cases', aim_folder_name, 'G-Triaxial_Graphs', 'G-Triaxial_graph_young.grf')
 
             if os.path.getsize(aim_path_and_name) != 0:
+                strain_data_list = []
                 young_data_list = []
                 with open(aim_path_and_name, 'r') as young_data:
                     for line in young_data:
                         values = [float(s) for s in line.split()]
+                        strain_data_list.append(values[0])
                         young_data_list.append(values[1]) 
-                young_modulus_max = max(young_data_list)
+                if max(strain_data_list) > 0.6:
+                    young_cnt = 0
+                    young_select_sum = 0.0
+                    for strain_data in strain_data_list:
+                        if strain_data > 0.4 and strain_data < 0.6:
+                            young_select_sum += young_data_list[strain_data_list.index(strain_data)]
+                            young_cnt += 1
+                    young_modulus_max = young_select_sum / young_cnt
+                else:
+                    young_modulus_max = max(young_data_list)
                 rel_error_young_modulus = ((young_modulus_max - self.aim_young_modulus) / self.aim_young_modulus)**2
             else:
                 young_modulus_max = 0.0
@@ -483,9 +494,14 @@ class GA:
                         nextoff.extend(offspring)
                 
                 #the predicted best individual by inside GA are added to the population
-                self.pop.append(self.bestindividual_in)
-                self.pop.append(self.best_ind_in)
+                newoff1_add = Gene(data=[])  # offspring1 produced by cross operation
+                newoff2_add = Gene(data=[])  # offspring2 produced by cross operation
+                newoff1_add.data = self.bestindividual_in['Gene'].data
+                newoff2_add.data = self.best_ind_in['Gene'].data
+                nextoff.append({'Gene': newoff1_add})
+                nextoff.append({'Gene': newoff2_add})
                 popsize += 2
+                
             else:
                 nextoff = self.pop
 
@@ -563,8 +579,8 @@ class GA:
 
             for g_in in range(NGEN):
   
-                self.log_export_file.write("############### Inside Generation {} ###############".format(g_in) + '\n')
-                self.log_export_file.flush()
+                #self.log_export_file.write("############### Inside Generation {} ###############".format(g_in) + '\n')
+                #self.log_export_file.flush()
     
                 # Apply selection based on their converted fitness
                 selectpop_in = self.selection(self.pop_in, popsize)
