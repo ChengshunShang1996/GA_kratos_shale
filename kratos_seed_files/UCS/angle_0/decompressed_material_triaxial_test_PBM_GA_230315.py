@@ -56,6 +56,8 @@ class DecompressedMaterialTriaxialTest(DEMAnalysisStage):
         PreUtilities().ResetSkinParticles(self.spheres_model_part)
         #self._GetSolver().cplusplus_strategy.ComputeSkin(self.spheres_model_part, 1.5)
         self.CylinderSkinDetermination()
+        if self.parameters["PostGroupId"].GetBool() is True:
+            self.SetGroupIDtoParticle()
         
     def ResetLoadingVelocity(self):
         for smp in self.rigid_face_model_part.SubModelParts:
@@ -448,6 +450,19 @@ class DecompressedMaterialTriaxialTest(DEMAnalysisStage):
 
         return (xtop_area, xbot_area, xlat_area, xtopcorner_area, xbotcorner_area, y_top_total, weight_top, y_bot_total, weight_bot)
 
+    def SetGroupIDtoParticle(self):
+        
+        #for shale rock simulation
+        self.joint_model_part = self.spheres_model_part.GetSubModelPart('DEMParts_Joint')
+
+        for element in self.joint_model_part.Elements:
+            element.GetNode(0).SetSolutionStepValue(GROUP_ID, 1)
+
+        self.body_model_part = self.spheres_model_part.GetSubModelPart('DEMParts_Body')
+
+        for element in self.body_model_part.Elements:
+            element.GetNode(0).SetSolutionStepValue(GROUP_ID, 0)
+    
     def ApplyLateralPressure(self, Pressure, XLAT, XBOT, XTOP, XBOTCORNER, XTOPCORNER, alpha_top, alpha_bot, alpha_lat):
 
         for node in XLAT:
