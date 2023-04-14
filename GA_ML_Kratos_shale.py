@@ -252,10 +252,22 @@ class GA:
             #loop every individual in the pop
             for indiv_ in nextoff:
 
-                Young_mudulus_particle = str(indiv_['Gene'].data[0])
-                Young_mudulus_bond     = str(indiv_['Gene'].data[1])
-                sigma_max_bond         = str(indiv_['Gene'].data[2])
-                cohesion_ini_bond      = str(indiv_['Gene'].data[3])
+                #Young_mudulus_particle = str(indiv_['Gene'].data[0])
+                #Young_mudulus_bond     = str(indiv_['Gene'].data[1])
+                #sigma_max_bond         = str(indiv_['Gene'].data[2])
+                #cohesion_ini_bond      = str(indiv_['Gene'].data[3])
+                strong_p_E      = str(indiv_['Gene'].data[0])
+                strong_b_E      = str(indiv_['Gene'].data[1])
+                strong_b_knks   = str(indiv_['Gene'].data[2])
+                weak_p_E        = str(indiv_['Gene'].data[3])
+                weak_b_E        = str(indiv_['Gene'].data[4])
+                weak_b_knks     = str(indiv_['Gene'].data[5])
+                strong_b_n_max  = str(indiv_['Gene'].data[6])
+                strong_b_t_max  = str(indiv_['Gene'].data[7])
+                strong_b_phi    = str(indiv_['Gene'].data[8])
+                weak_b_n_max    = str(indiv_['Gene'].data[9])
+                weak_b_t_max    = str(indiv_['Gene'].data[10])
+                weak_b_phi      = str(indiv_['Gene'].data[11])
 
                 for confining_pressure in self.confining_pressure_list:
 
@@ -264,8 +276,11 @@ class GA:
                         if confining_pressure == 0: #confining pressure = 0.0
 
                             #creat new folder
-                            new_folder_name = 'G' + str(g_count) + '_Ep' + Young_mudulus_particle + '_Eb' + Young_mudulus_bond\
-                                            + '_Sig' + sigma_max_bond + '_Coh' + cohesion_ini_bond
+                            new_folder_name = 'G' + str(g_count) + '_' + confining_pressure + '_' + texture_angle + '_' \
+                                                + strong_p_E + '_' + strong_b_E + '_' + strong_b_knks + '_'\
+                                                + weak_p_E + '_' + weak_b_E + '_' + weak_b_knks + '_'\
+                                                + strong_b_n_max + '_' + strong_b_t_max + '_' + strong_b_phi + '_'\
+                                                + weak_b_n_max + '_' + weak_b_t_max + '_' + weak_b_phi
                             aim_path = os.path.join(os.getcwd(),'Generated_kratos_cases', new_folder_name)
                             aim_path_change_marker = 0
                             aim_path, aim_path_change_marker = self.uniquify(aim_path, aim_path_change_marker)
@@ -273,20 +288,42 @@ class GA:
 
                             #copy source file
                             texture_angle_folder = 'angle_' + str(texture_angle)
-                            seed_file_name_list = ['decompressed_material_triaxial_test_PBM_GA_230315.py', 'G-TriaxialDEM_FEM_boundary.mdpa',\
+                            seed_file_name_list = ['decompressed_material_triaxial_test_PBM_GA_230413.py', 'G-TriaxialDEM_FEM_boundary.mdpa',\
                                                     'G-TriaxialDEM.mdpa', 'ProjectParametersDEM.json', 'MaterialsDEM.json', 'run_omp.sh']
                             for seed_file_name in seed_file_name_list:
                                 seed_file_path_and_name = os.path.join(os.getcwd(), 'kratos_seed_files', 'UCS', texture_angle_folder, seed_file_name)
                                 aim_file_path_and_name = os.path.join(aim_path, seed_file_name)
 
                                 if seed_file_name == 'MaterialsDEM.json':
+                                    young_modulus_marker = 0
+                                    bond_young_modulus_marker = 0
+                                    bond_knks_marker = 0
+                                    bond_sigma_max_marker = 0
+                                    bond_tau_zero_marker = 0
+                                    bond_phi_marker = 0
                                     with open(seed_file_path_and_name, "r") as f_material:
                                         with open(aim_file_path_and_name, "w") as f_material_w:
                                             for line in f_material.readlines():
                                                 if "YOUNG_MODULUS" in line:
-                                                    line = line.replace("5.0e10", str(Young_mudulus_particle))
+                                                    if young_modulus_marker == 0:
+                                                        line = line.replace("74.95e9", str(strong_p_E))
+                                                        young_modulus_marker += 1
+                                                    elif young_modulus_marker == 1:
+                                                        line = line.replace("74.95e9", str(strong_p_E))
+                                                        young_modulus_marker += 1
+                                                    elif young_modulus_marker == 2:
+                                                        line = line.replace("36.93e9", str(weak_p_E))
+                                                        young_modulus_marker += 1
                                                 if "BOND_YOUNG_MODULUS" in line:
-                                                    line = line.replace("3.0e8", str(Young_mudulus_bond))
+                                                    if bond_young_modulus_marker == 0:
+                                                        line = line.replace("3.0e8", str(Young_mudulus_bond))
+                                                        bond_young_modulus_marker += 1
+                                                    elif bond_young_modulus_marker == 1:
+                                                        line = line.replace("3.0e8", str(Young_mudulus_bond))
+                                                        bond_young_modulus_marker += 1
+                                                    elif bond_young_modulus_marker == 2:
+                                                        line = line.replace("3.0e8", str(Young_mudulus_bond))
+                                                        bond_young_modulus_marker += 1 
                                                 if "BOND_SIGMA_MAX" in line:
                                                     line = line.replace("1e5", str(sigma_max_bond))
                                                 if "BOND_TAU_ZERO" in line:
@@ -311,8 +348,11 @@ class GA:
                         else: #confining pressure > 0.0
 
                             #creat new folder
-                            new_folder_name = 'G' + str(g_count) + '_Ep' + Young_mudulus_particle + '_Eb' + Young_mudulus_bond\
-                                            + '_Sig' + sigma_max_bond + '_Coh' + cohesion_ini_bond
+                            new_folder_name = 'G' + str(g_count) + '_' + confining_pressure + '_' + texture_angle + '_' \
+                                                + strong_p_E + '_' + strong_b_E + '_' + strong_b_knks + '_'\
+                                                + weak_p_E + '_' + weak_b_E + '_' + weak_b_knks + '_'\
+                                                + strong_b_n_max + '_' + strong_b_t_max + '_' + strong_b_phi + '_'\
+                                                + weak_b_n_max + '_' + weak_b_t_max + '_' + weak_b_phi
                             aim_path = os.path.join(os.getcwd(),'Generated_kratos_cases', new_folder_name)
                             aim_path_change_marker = 0
                             aim_path, aim_path_change_marker = self.uniquify(aim_path, aim_path_change_marker)
@@ -691,8 +731,10 @@ if __name__ == "__main__":
     aim_strength, aim_young_modulus = 4.323e7, 5.54e9
     aim_strain = 1.01265
  
-    up  = [1e11, 1e11, 1e8, 1e8]  # upper range for variables
-    low = [5e8, 5e8, 1e6, 1e6,]  # lower range for variables
+    #variables list[strong_p_E, strong_b_E, strong_b_knks, weak_p_E, weak_b_E, weak_b_knks,
+    #               strong_b_n_max, strong_b_t_max, strong_b_phi, weak_b_n_max, weak_b_t_max, weak_b_phi]
+    low = [5e8, 5e8, 1, 5e8, 5e8, 1, 2e6, 2e6, 0, 2e6, 2e6, 0]  # lower range for variables
+    up  = [1e11, 1e11, 3, 1e11, 1e11, 3, 2e8, 2e8, 50, 2e8, 2e8, 50]  # upper range for variables
     parameter = [CXPB, MUTPB, NGEN, popsize, low, up, aim_strength, aim_young_modulus, aim_strain]
     run = GA(parameter)
     run.GA_main()
