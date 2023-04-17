@@ -314,20 +314,47 @@ class GA:
                                                     elif young_modulus_marker == 2:
                                                         line = line.replace("36.93e9", str(weak_p_E))
                                                         young_modulus_marker += 1
-                                                if "BOND_YOUNG_MODULUS" in line:
+                                                elif "BOND_YOUNG_MODULUS" in line:
                                                     if bond_young_modulus_marker == 0:
-                                                        line = line.replace("3.0e8", str(Young_mudulus_bond))
+                                                        line = line.replace("74.95e9", str(strong_b_E))
                                                         bond_young_modulus_marker += 1
                                                     elif bond_young_modulus_marker == 1:
-                                                        line = line.replace("3.0e8", str(Young_mudulus_bond))
+                                                        line = line.replace("74.95e9", str(strong_b_E))
                                                         bond_young_modulus_marker += 1
                                                     elif bond_young_modulus_marker == 2:
-                                                        line = line.replace("3.0e8", str(Young_mudulus_bond))
-                                                        bond_young_modulus_marker += 1 
-                                                if "BOND_SIGMA_MAX" in line:
-                                                    line = line.replace("1e5", str(sigma_max_bond))
-                                                if "BOND_TAU_ZERO" in line:
-                                                    line = line.replace("5e5", str(cohesion_ini_bond))
+                                                        line = line.replace("36.93e9", str(weak_b_E))
+                                                        bond_young_modulus_marker += 1
+                                                elif "BOND_KNKS_RATIO" in line:
+                                                    if bond_knks_marker == 0:
+                                                        line = line.replace("2.5", str(strong_b_knks))
+                                                        bond_knks_marker += 1
+                                                    elif bond_knks_marker == 1:
+                                                        line = line.replace("2.5", str(strong_b_knks))
+                                                        bond_knks_marker += 1
+                                                    elif bond_knks_marker == 2:
+                                                        line = line.replace("2.5", str(weak_b_knks))
+                                                        bond_knks_marker += 1
+                                                elif "BOND_SIGMA_MAX" in line:
+                                                    if bond_sigma_max_marker == 0:
+                                                        line = line.replace("198.43e7", str(strong_b_n_max))
+                                                    elif bond_sigma_max_marker == 1:
+                                                        line = line.replace("198.43e7", str(strong_b_n_max))
+                                                    elif bond_sigma_max_marker == 2:
+                                                        line = line.replace("54.7e6", str(weak_b_n_max))
+                                                elif "BOND_TAU_ZERO" in line:
+                                                    if bond_tau_zero_marker == 0:
+                                                        line = line.replace("40e7", str(strong_b_t_max))
+                                                    elif bond_tau_zero_marker == 1:
+                                                        line = line.replace("40e6", str(strong_b_t_max))
+                                                    elif bond_tau_zero_marker == 2:
+                                                        line = line.replace("11e6", str(weak_b_t_max))
+                                                elif "BOND_INTERNAL_FRICC" in line:
+                                                    if bond_phi_marker == 0:
+                                                        line = line.replace("0.0", str(strong_b_phi))
+                                                    elif bond_phi_marker == 1:
+                                                        line = line.replace("0.0", str(strong_b_phi))
+                                                    elif bond_phi_marker == 2:
+                                                        line = line.replace("0.0", str(weak_b_phi))
                                                 f_material_w.write(line)
                                 elif seed_file_name == 'ProjectParametersDEM.json':
                                     with open(seed_file_path_and_name, "r") as f_parameter:

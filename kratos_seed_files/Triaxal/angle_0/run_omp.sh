@@ -18,4 +18,4 @@
 ########### Further details -> man sbatch ##########
 #export OMP_NUM_THREADS=1
 
-python3 decompressed_material_triaxial_test_PBM_GA_230315.py
+python3 MainKratos.py

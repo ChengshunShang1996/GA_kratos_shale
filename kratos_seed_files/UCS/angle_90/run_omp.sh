@@ -3,7 +3,7 @@
 #SBATCH --output=BTS-Q-Ep6.2e10-T1e3-f0.1%j.out
 #SBATCH --error=BTS-Q-Ep6.2e10-T1e3-f0.1%j.err
 #SBATCH --partition=HM
-#SBATCH --ntasks-per-node=4
+#SBATCH --ntasks-per-node=1
 
 ##Optional - Required memory in MB per node, or per core. Defaults are 1GB per core.
 ##SBATCH --mem=3096
@@ -16,6 +16,6 @@
 #SBATCH --time=10-0
 
 ########### Further details -> man sbatch ##########
-#export OMP_NUM_THREADS=4
+#export OMP_NUM_THREADS=1
 
 python3 decompressed_material_triaxial_test_PBM_GA_230315.py
