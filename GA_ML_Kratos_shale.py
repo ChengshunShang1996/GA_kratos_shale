@@ -60,7 +60,7 @@ class GA:
         self.aim_young_modulus = parameter[7]
         self.aim_strain = parameter[8]
         self.indiv_data_head_not_written = True
-        self.confining_pressure_list = [0, 5, 15]
+        self.confining_pressure_list = [0, 5e6, 15e6]
         self.texture_angle_list = [0, 45, 90]
  
     def evaluate(self, geneinfo):
@@ -252,10 +252,6 @@ class GA:
             #loop every individual in the pop
             for indiv_ in nextoff:
 
-                #Young_mudulus_particle = str(indiv_['Gene'].data[0])
-                #Young_mudulus_bond     = str(indiv_['Gene'].data[1])
-                #sigma_max_bond         = str(indiv_['Gene'].data[2])
-                #cohesion_ini_bond      = str(indiv_['Gene'].data[3])
                 strong_p_E      = str(indiv_['Gene'].data[0])
                 strong_b_E      = str(indiv_['Gene'].data[1])
                 strong_b_knks   = str(indiv_['Gene'].data[2])
@@ -387,29 +383,82 @@ class GA:
 
                             #copy source file
                             texture_angle_folder = 'angel_' + str(texture_angle)
-                            seed_file_name_list = ['decompressed_material_triaxial_test_PBM_GA_230315.py', 'G-TriaxialDEM_FEM_boundary.mdpa',\
-                                                    'G-TriaxialDEM.mdpa', 'ProjectParametersDEM.json', 'MaterialsDEM.json', 'run_omp.sh']
+                            seed_file_name_list = ['dem_wrapper_cshang_230417.py', 'FEM_membrane.mdpa','G-TriaxialDEM.mdpa',\
+                                                    'G-TriaxialDEM_FEM_boundary.mdpa', 'MainKratos.py', 'MaterialsDEM.json', \
+                                                    'ProjectParametersCoSim.json', 'ProjectParametersDEM.json', 'ProjectParametersFEM.json',\
+                                                    'StructuralMaterials.json','run_omp.sh']
                             for seed_file_name in seed_file_name_list:
                                 seed_file_path_and_name = os.path.join(os.getcwd(),'kratos_seed_files','Triaxial', texture_angle_folder, seed_file_name)
                                 aim_file_path_and_name = os.path.join(aim_path, seed_file_name)
 
                                 if seed_file_name == 'MaterialsDEM.json':
+                                    young_modulus_marker = 0
+                                    bond_young_modulus_marker = 0
+                                    bond_knks_marker = 0
+                                    bond_sigma_max_marker = 0
+                                    bond_tau_zero_marker = 0
+                                    bond_phi_marker = 0
                                     with open(seed_file_path_and_name, "r") as f_material:
                                         with open(aim_file_path_and_name, "w") as f_material_w:
                                             for line in f_material.readlines():
                                                 if "YOUNG_MODULUS" in line:
-                                                    line = line.replace("5.0e10", str(Young_mudulus_particle))
-                                                if "BOND_YOUNG_MODULUS" in line:
-                                                    line = line.replace("3.0e8", str(Young_mudulus_bond))
-                                                if "BOND_SIGMA_MAX" in line:
-                                                    line = line.replace("1e5", str(sigma_max_bond))
-                                                if "BOND_TAU_ZERO" in line:
-                                                    line = line.replace("5e5", str(cohesion_ini_bond))
+                                                    if young_modulus_marker == 0:
+                                                        line = line.replace("74.95e9", str(strong_p_E))
+                                                        young_modulus_marker += 1
+                                                    elif young_modulus_marker == 1:
+                                                        line = line.replace("74.95e9", str(strong_p_E))
+                                                        young_modulus_marker += 1
+                                                    elif young_modulus_marker == 2:
+                                                        line = line.replace("36.93e9", str(weak_p_E))
+                                                        young_modulus_marker += 1
+                                                elif "BOND_YOUNG_MODULUS" in line:
+                                                    if bond_young_modulus_marker == 0:
+                                                        line = line.replace("74.95e9", str(strong_b_E))
+                                                        bond_young_modulus_marker += 1
+                                                    elif bond_young_modulus_marker == 1:
+                                                        line = line.replace("74.95e9", str(strong_b_E))
+                                                        bond_young_modulus_marker += 1
+                                                    elif bond_young_modulus_marker == 2:
+                                                        line = line.replace("36.93e9", str(weak_b_E))
+                                                        bond_young_modulus_marker += 1
+                                                elif "BOND_KNKS_RATIO" in line:
+                                                    if bond_knks_marker == 0:
+                                                        line = line.replace("2.5", str(strong_b_knks))
+                                                        bond_knks_marker += 1
+                                                    elif bond_knks_marker == 1:
+                                                        line = line.replace("2.5", str(strong_b_knks))
+                                                        bond_knks_marker += 1
+                                                    elif bond_knks_marker == 2:
+                                                        line = line.replace("2.5", str(weak_b_knks))
+                                                        bond_knks_marker += 1
+                                                elif "BOND_SIGMA_MAX" in line:
+                                                    if bond_sigma_max_marker == 0:
+                                                        line = line.replace("198.43e7", str(strong_b_n_max))
+                                                    elif bond_sigma_max_marker == 1:
+                                                        line = line.replace("198.43e7", str(strong_b_n_max))
+                                                    elif bond_sigma_max_marker == 2:
+                                                        line = line.replace("54.7e6", str(weak_b_n_max))
+                                                elif "BOND_TAU_ZERO" in line:
+                                                    if bond_tau_zero_marker == 0:
+                                                        line = line.replace("40e7", str(strong_b_t_max))
+                                                    elif bond_tau_zero_marker == 1:
+                                                        line = line.replace("40e6", str(strong_b_t_max))
+                                                    elif bond_tau_zero_marker == 2:
+                                                        line = line.replace("11e6", str(weak_b_t_max))
+                                                elif "BOND_INTERNAL_FRICC" in line:
+                                                    if bond_phi_marker == 0:
+                                                        line = line.replace("0.0", str(strong_b_phi))
+                                                    elif bond_phi_marker == 1:
+                                                        line = line.replace("0.0", str(strong_b_phi))
+                                                    elif bond_phi_marker == 2:
+                                                        line = line.replace("0.0", str(weak_b_phi))
                                                 f_material_w.write(line)
-                                elif seed_file_name == 'ProjectParametersDEM.json':
+                                elif seed_file_name == 'ProjectParametersFEM.json':
                                     with open(seed_file_path_and_name, "r") as f_parameter:
                                         with open(aim_file_path_and_name, "w") as f_parameter_w:
                                             for line in f_parameter.readlines():
+                                                if "-1000000.0*t" in line:
+                                                    line = line.replace("-1000000.0", str(confining_pressure))
                                                 f_parameter_w.write(line)
                                 elif seed_file_name == 'run_omp.sh':
                                     with open(seed_file_path_and_name, "r") as f_run_omp:
