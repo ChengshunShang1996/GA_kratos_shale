@@ -62,7 +62,6 @@ class GA:
         self.clear_old_and_creat_new_kratos_data_folder() # clear old and creat new kratos data folder
         self.aim_strength = parameter[6]
         self.aim_young_modulus = parameter[7]
-        self.aim_strain = parameter[8]
         self.indiv_data_head_not_written = True
         self.confining_pressure_list = [0, 5e6, 15e6]
         self.texture_angle_list = [0, 45, 90]
@@ -78,7 +77,7 @@ class GA:
         y = 1 / ((x1**2 + x2**2 + x3**2 + x4**2) * 1e5) #set the initial fitness a very small value
         return y
     
-    def evaluate_in(self, geneinfo, ML_xgb_4, run_ml_4, ML_xgb_5, ML_xgb_6):
+    def evaluate_in(self, geneinfo, ML_xgb_4, run_ml_4, ML_xgb_5):
         """
         fitness function using ML model
         """
@@ -86,19 +85,29 @@ class GA:
         x2 = geneinfo[1]
         x3 = geneinfo[2]
         x4 = geneinfo[3]
-        X_test = [[x1,x2,x3,x4]]
+        x5 = geneinfo[4]
+        x6 = geneinfo[5]
+        x7 = geneinfo[6]
+        x8 = geneinfo[7]
+        x9 = geneinfo[8]
+        x10 = geneinfo[9]
+        x11 = geneinfo[10]
+        x12 = geneinfo[11]
+        x13 = geneinfo[12]
+        x14 = geneinfo[13]
+        x15 = geneinfo[14]
+        x16 = geneinfo[15]
+        X_test = [[x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16]]
         X_test = run_ml_4.my_normalizer(X_test, self.parameter[4], self.parameter[5])
 
         predicted_strength = ML_xgb_4.predict(X_test)
-        predicted_starin = ML_xgb_5.predict(X_test)
-        predicted_young_modulus = ML_xgb_6.predict(X_test)
+        predicted_young_modulus = ML_xgb_5.predict(X_test)
 
         rel_error_strength = ((predicted_strength - self.aim_strength) / self.aim_strength)**2
-        rel_error_starin   = ((predicted_starin - self.aim_strain) / self.aim_strain)**2
         rel_error_young_modulus = ((predicted_young_modulus - self.aim_young_modulus) / self.aim_young_modulus)**2
 
-        if rel_error_strength + rel_error_young_modulus + rel_error_starin:
-            fitness = 1 / (rel_error_strength + rel_error_young_modulus + rel_error_starin)
+        if rel_error_strength + rel_error_young_modulus:
+            fitness = 1 / (rel_error_strength + rel_error_young_modulus)
         else:
             fitness = 0.0
 
@@ -509,7 +518,8 @@ class GA:
             weak_b_t_max    = str(indiv_['Gene'].data[10])
             weak_b_phi      = str(indiv_['Gene'].data[11])
 
-            rel_error_strength = rel_error_starin = rel_error_young_modulus = 0.0
+            rel_error_strength = rel_error_young_modulus = 0.0
+            aim_value_index_i = aim_value_index_j = 0
 
             #write out individual data for ML
             output_file_name = 'G_info.csv' 
@@ -542,12 +552,12 @@ class GA:
                                 #strain_data_list.append(values[0])
                         strength_max = max(stress_data_list)
                         #strain_max = strain_data_list[stress_data_list.index(max(stress_data_list))]
-                        rel_error_strength += ((strength_max - self.aim_strength) / self.aim_strength)**2
+                        rel_error_strength += ((strength_max - self.aim_strength[aim_value_index_i][aim_value_index_j]) / self.aim_strength[aim_value_index_i][aim_value_index_j])**2
                         #rel_error_starin   += ((strain_max - self.aim_strain) / self.aim_strain)**2
                     else:
                         strength_max = 0.0
                         #strain_max = 0.0
-                        rel_error_strength += (self.aim_strength)**2
+                        rel_error_strength += (self.aim_strength[aim_value_index_i][aim_value_index_j])**2
                         #rel_error_starin   += (self.aim_strain)**2
 
                     #the Young modulus files
@@ -571,10 +581,10 @@ class GA:
                             young_modulus_max = young_select_sum / young_cnt
                         else:
                             young_modulus_max = max(young_data_list)
-                        rel_error_young_modulus += ((young_modulus_max - self.aim_young_modulus) / self.aim_young_modulus)**2
+                        rel_error_young_modulus += ((young_modulus_max - self.aim_young_modulus[aim_value_index_i][aim_value_index_j]) / self.aim_young_modulus[aim_value_index_i][aim_value_index_j])**2
                     else:
                         young_modulus_max = 0.0
-                        rel_error_young_modulus += (self.aim_young_modulus)**2
+                        rel_error_young_modulus += (self.aim_young_modulus[aim_value_index_i][aim_value_index_j])**2
 
                     #write out indiv information
                     indiv_data = []
@@ -602,6 +612,9 @@ class GA:
                             self.indiv_data_head_not_written = False
                         writer.writerow(indiv_data)
                         f_w.close()
+
+                aim_value_index_j += 1
+            aim_value_index_i += 1
 
             if rel_error_strength + rel_error_young_modulus:
                 fitness = 1 / (rel_error_strength + rel_error_young_modulus)
@@ -771,19 +784,14 @@ class GA:
             data_max_list = self.parameter[5]
 
             #strength predictor
-            predict_index = 4
+            predict_index = 14
             run_ml_4 = MachineLearning()
             ML_xgb_4 = run_ml_4.ML_main(data_min_list, data_max_list, predict_index)
 
-            #strength predictor
-            predict_index = 5
+            #Young's modulus predictor
+            predict_index = 15
             run_ml_5 = MachineLearning()
             ML_xgb_5 = run_ml_5.ML_main(data_min_list, data_max_list, predict_index)
-
-            #strength predictor
-            predict_index = 6
-            run_ml_6 = MachineLearning()
-            ML_xgb_6 = run_ml_6.ML_main(data_min_list, data_max_list, predict_index)
 
             # inside GA loop
             self.pop_in = self.pop
@@ -810,15 +818,15 @@ class GA:
                         if random.random() < MUTPB:  # mutate an individual with probability MUTPB
                             muteoff1_in = self.mutation(crossoff1_in, self.bound)
                             muteoff2_in = self.mutation(crossoff2_in, self.bound)
-                            fit_muteoff1_in = self.evaluate_in(muteoff1_in.data, ML_xgb_4, run_ml_4, ML_xgb_5, ML_xgb_6)  # Evaluate the individuals
-                            fit_muteoff2_in = self.evaluate_in(muteoff2_in.data, ML_xgb_4, run_ml_4, ML_xgb_5, ML_xgb_6)  # Evaluate the individuals
+                            fit_muteoff1_in = self.evaluate_in(muteoff1_in.data, ML_xgb_4, run_ml_4, ML_xgb_5)  # Evaluate the individuals
+                            fit_muteoff2_in = self.evaluate_in(muteoff2_in.data, ML_xgb_4, run_ml_4, ML_xgb_5)  # Evaluate the individuals
                             #fit_muteoff1_in = 0.1
                             #fit_muteoff2_in = 0.01
                             nextoff_in.append({'Gene': muteoff1_in, 'fitness': fit_muteoff1_in})
                             nextoff_in.append({'Gene': muteoff2_in, 'fitness': fit_muteoff2_in})
                         else:
-                            fit_crossoff1_in = self.evaluate_in(crossoff1_in.data, ML_xgb_4, run_ml_4, ML_xgb_5, ML_xgb_6)  # Evaluate the individuals
-                            fit_crossoff2_in = self.evaluate_in(crossoff2_in.data, ML_xgb_4, run_ml_4, ML_xgb_5, ML_xgb_6)
+                            fit_crossoff1_in = self.evaluate_in(crossoff1_in.data, ML_xgb_4, run_ml_4, ML_xgb_5)  # Evaluate the individuals
+                            fit_crossoff2_in = self.evaluate_in(crossoff2_in.data, ML_xgb_4, run_ml_4, ML_xgb_5)
                             #fit_crossoff1_in = 0.1
                             #fit_crossoff2_in = 0.01
                             nextoff_in.append({'Gene': crossoff1_in, 'fitness': fit_crossoff1_in})
@@ -845,13 +853,24 @@ class GA:
  
 if __name__ == "__main__":
     CXPB, MUTPB, NGEN, popsize = 0.8, 0.2, 500, 200  # popsize must be even number
-    aim_strength, aim_young_modulus = 4.323e7, 5.54e9
-    aim_strain = 1.01265
+    #aim_strength, aim_young_modulus = 4.323e7, 5.54e9
+    #aim_strain = 1.01265
+
+    # Rows means 0,5,15 MPa
+    # Columns means 0,45,90 degree
+    # Value 0.0 means unreliable value
+    aim_strength      = [[193.1e6, 0.75e6, 67.53e6],\
+                         [208.47e6, 106.9e6, 121.77e6],\
+                         [266.83e6, 58.9e6, 182.77e6]]
+    
+    aim_young_modulus = [[44.97e9, 0.0, 181.68e9],\
+                         [29.14e9, 109.65e9, 99.94e9],\
+                         [40.0e9, 62.65e9, 62.5e9]]
  
     #variables list[strong_p_E, strong_b_E, strong_b_knks, weak_p_E, weak_b_E, weak_b_knks,
     #               strong_b_n_max, strong_b_t_max, strong_b_phi, weak_b_n_max, weak_b_t_max, weak_b_phi]
     low = [5e8, 5e8, 1, 5e8, 5e8, 1, 2e6, 2e6, 0, 2e6, 2e6, 0]  # lower range for variables
     up  = [1e11, 1e11, 3, 1e11, 1e11, 3, 2e8, 2e8, 50, 2e8, 2e8, 50]  # upper range for variables
-    parameter = [CXPB, MUTPB, NGEN, popsize, low, up, aim_strength, aim_young_modulus, aim_strain]
+    parameter = [CXPB, MUTPB, NGEN, popsize, low, up, aim_strength, aim_young_modulus]
     run = GA(parameter)
     run.GA_main()
