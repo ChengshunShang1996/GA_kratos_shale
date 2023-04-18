@@ -41,6 +41,7 @@ class DEMWrapper(kratos_base_wrapper.KratosBaseWrapper):
             def __init__(self, model, parameters):
                 super().__init__(model, parameters)
                 self.parameters = parameters
+                self.end_sim = 0
             
             def Initialize(self):
                 super().Initialize()
@@ -230,7 +231,7 @@ class DEMWrapper(kratos_base_wrapper.KratosBaseWrapper):
             def CheckSimulationEnd(self):
 
                 #if self.total_stress_mean_max_time < 0.5 * self.time or self.strain > 5.0:
-                if self.total_stress_mean_max_time < 0.5 * self.time or self.strain > 2.0:
+                if self.total_stress_mean_max_time < 0.5 * self.time or self.strain > 8.0:
                     self.end_sim = 2   # means end the simulation
                     
             def PrintGraph(self, time):

@@ -517,7 +517,7 @@ class GA:
 
             indiv_data_head = ['confining_pressure','texture_angle','strong_p_E', 'strong_b_E', 'strong_b_knks', \
                                'weak_p_E', 'weak_b_E', 'weak_b_knks', 'strong_b_n_max', 'strong_b_t_max', \
-                                'strong_b_phi', 'weak_b_n_max', 'weak_b_t_max', 'weak_b_phi', 'strength_max', 'strain_max', 'young_modulus_max']
+                                'strong_b_phi', 'weak_b_n_max', 'weak_b_t_max', 'weak_b_phi', 'strength_max', 'young_modulus_max']
 
             for confining_pressure in self.confining_pressure_list:
 
@@ -534,21 +534,21 @@ class GA:
 
                     if os.path.getsize(aim_path_and_name) != 0:
                         stress_data_list = []
-                        strain_data_list = []
+                        #strain_data_list = []
                         with open(aim_path_and_name, 'r') as stress_strain_data:
                             for line in stress_strain_data:
                                 values = [float(s) for s in line.split()]
                                 stress_data_list.append(values[1]) 
-                                strain_data_list.append(values[0])
+                                #strain_data_list.append(values[0])
                         strength_max = max(stress_data_list)
-                        strain_max = strain_data_list[stress_data_list.index(max(stress_data_list))]
+                        #strain_max = strain_data_list[stress_data_list.index(max(stress_data_list))]
                         rel_error_strength += ((strength_max - self.aim_strength) / self.aim_strength)**2
-                        rel_error_starin   += ((strain_max - self.aim_strain) / self.aim_strain)**2
+                        #rel_error_starin   += ((strain_max - self.aim_strain) / self.aim_strain)**2
                     else:
                         strength_max = 0.0
-                        strain_max = 0.0
+                        #strain_max = 0.0
                         rel_error_strength += (self.aim_strength)**2
-                        rel_error_starin   += (self.aim_strain)**2
+                        #rel_error_starin   += (self.aim_strain)**2
 
                     #the Young modulus files
                     aim_path_and_name = os.path.join(os.getcwd(),'Generated_kratos_cases', aim_folder_name, 'G-Triaxial_Graphs', 'G-Triaxial_graph_young.grf')
@@ -595,7 +595,7 @@ class GA:
                         indiv_data.append(weak_b_t_max)
                         indiv_data.append(weak_b_phi)
                         indiv_data.append(strength_max)
-                        indiv_data.append(strain_max)
+                        #indiv_data.append(strain_max)
                         indiv_data.append(young_modulus_max)
                         if self.indiv_data_head_not_written:
                             writer.writerow(indiv_data_head)
@@ -603,8 +603,8 @@ class GA:
                         writer.writerow(indiv_data)
                         f_w.close()
 
-            if rel_error_strength + rel_error_young_modulus + rel_error_starin:
-                fitness = 1 / (rel_error_strength + rel_error_young_modulus + rel_error_starin)
+            if rel_error_strength + rel_error_young_modulus:
+                fitness = 1 / (rel_error_strength + rel_error_young_modulus)
             else:
                 fitness = 0
 

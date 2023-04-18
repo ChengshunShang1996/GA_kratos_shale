@@ -41,6 +41,7 @@ class DEMWrapper(kratos_base_wrapper.KratosBaseWrapper):
             def __init__(self, model, parameters):
                 super().__init__(model, parameters)
                 self.parameters = parameters
+                self.end_sim = 0
             
             def Initialize(self):
                 super().Initialize()
