@@ -45,7 +45,11 @@ class GA:
         for i in range(self.parameter[3]):
             geneinfo = []
             for pos in range(len(low)):
-                geneinfo.append(random.randint(self.bound[0][pos], self.bound[1][pos]))  # initialise popluation
+                if pos == 2 or pos == 5: #to generate random float
+                    temp_add = (self.bound[1][pos] - self.bound[0][pos]) * random.random() + self.bound[0][pos]
+                    geneinfo.append(round(temp_add, 2))  # initialise popluation
+                else:
+                    geneinfo.append(random.randint(self.bound[0][pos], self.bound[1][pos]))  # initialise popluation
  
             fitness = self.evaluate(geneinfo)  # evaluate each chromosome 
             pop.append({'Gene': Gene(data=geneinfo), 'fitness': fitness})  # store the chromosome and its fitness
@@ -185,7 +189,11 @@ class GA:
         else:
             pos = random.randrange(0, dim)  # chose a position in crossoff to perform mutation.
  
-        crossoff.data[pos] = random.randint(bound[0][pos], bound[1][pos])
+        if pos == 2 or pos == 5:
+            temp_add = (bound[1][pos] - bound[0][pos]) * random.random() + bound[0][pos]
+            crossoff.data[pos] = round(temp_add, 2)
+        else:
+            crossoff.data[pos] = random.randint(bound[0][pos], bound[1][pos])
         return crossoff
     
     def clear_old_and_creat_new_kratos_data_folder(self):
@@ -272,7 +280,7 @@ class GA:
                         if confining_pressure == 0: #confining pressure = 0.0
 
                             #creat new folder
-                            new_folder_name = 'G' + str(g_count) + '_' + confining_pressure + '_' + texture_angle + '_' \
+                            new_folder_name = 'G' + str(g_count) + '_' + str(confining_pressure) + '_' + str(texture_angle) + '_' \
                                                 + strong_p_E + '_' + strong_b_E + '_' + strong_b_knks + '_'\
                                                 + weak_p_E + '_' + weak_b_E + '_' + weak_b_knks + '_'\
                                                 + strong_b_n_max + '_' + strong_b_t_max + '_' + strong_b_phi + '_'\
@@ -371,7 +379,7 @@ class GA:
                         else: #confining pressure > 0.0
 
                             #creat new folder
-                            new_folder_name = 'G' + str(g_count) + '_' + confining_pressure + '_' + texture_angle + '_' \
+                            new_folder_name = 'G' + str(g_count) + '_' + str(confining_pressure) + '_' + str(texture_angle) + '_' \
                                                 + strong_p_E + '_' + strong_b_E + '_' + strong_b_knks + '_'\
                                                 + weak_p_E + '_' + weak_b_E + '_' + weak_b_knks + '_'\
                                                 + strong_b_n_max + '_' + strong_b_t_max + '_' + strong_b_phi + '_'\
@@ -382,7 +390,7 @@ class GA:
                             os.mkdir(aim_path)
 
                             #copy source file
-                            texture_angle_folder = 'angel_' + str(texture_angle)
+                            texture_angle_folder = 'angle_' + str(texture_angle)
                             seed_file_name_list = ['dem_wrapper_cshang_230417.py', 'FEM_membrane.mdpa','G-TriaxialDEM.mdpa',\
                                                     'G-TriaxialDEM_FEM_boundary.mdpa', 'MainKratos.py', 'MaterialsDEM.json', \
                                                     'ProjectParametersCoSim.json', 'ProjectParametersDEM.json', 'ProjectParametersFEM.json',\
@@ -485,61 +493,115 @@ class GA:
     def read_kratos_results_and_add_fitness(self, g_count, nextoff):
         
         self.log_export_file.write('Reading kratos results and adding fitness ...' + '\n')
+        
         for indiv_ in nextoff:
 
-            Young_mudulus_particle = str(indiv_['Gene'].data[0])
-            Young_mudulus_bond     = str(indiv_['Gene'].data[1])
-            sigma_max_bond         = str(indiv_['Gene'].data[2])
-            cohesion_ini_bond      = str(indiv_['Gene'].data[3])
+            strong_p_E      = str(indiv_['Gene'].data[0])
+            strong_b_E      = str(indiv_['Gene'].data[1])
+            strong_b_knks   = str(indiv_['Gene'].data[2])
+            weak_p_E        = str(indiv_['Gene'].data[3])
+            weak_b_E        = str(indiv_['Gene'].data[4])
+            weak_b_knks     = str(indiv_['Gene'].data[5])
+            strong_b_n_max  = str(indiv_['Gene'].data[6])
+            strong_b_t_max  = str(indiv_['Gene'].data[7])
+            strong_b_phi    = str(indiv_['Gene'].data[8])
+            weak_b_n_max    = str(indiv_['Gene'].data[9])
+            weak_b_t_max    = str(indiv_['Gene'].data[10])
+            weak_b_phi      = str(indiv_['Gene'].data[11])
 
-            #the strength files
-            aim_folder_name = 'G' + str(g_count) + '_Ep' + Young_mudulus_particle + '_Eb' + Young_mudulus_bond\
-                            + '_Sig' + sigma_max_bond + '_Coh' + cohesion_ini_bond
-            aim_path_and_name = os.path.join(os.getcwd(),'Generated_kratos_cases', aim_folder_name, 'G-Triaxial_Graphs', 'G-Triaxial_graph.grf')
+            rel_error_strength = rel_error_starin = rel_error_young_modulus = 0.0
 
-            if os.path.getsize(aim_path_and_name) != 0:
-                stress_data_list = []
-                strain_data_list = []
-                with open(aim_path_and_name, 'r') as stress_strain_data:
-                    for line in stress_strain_data:
-                        values = [float(s) for s in line.split()]
-                        stress_data_list.append(values[1]) 
-                        strain_data_list.append(values[0])
-                strength_max = max(stress_data_list)
-                strain_max = strain_data_list[stress_data_list.index(max(stress_data_list))]
-                rel_error_strength = ((strength_max - self.aim_strength) / self.aim_strength)**2
-                rel_error_starin   = ((strain_max - self.aim_strain) / self.aim_strain)**2
-            else:
-                strength_max = 0.0
-                strain_max = 0.0
-                rel_error_strength = (self.aim_strength)**2
-                rel_error_starin   = (self.aim_strain)**2
+            #write out individual data for ML
+            output_file_name = 'G_info.csv' 
+            output_aim_path_and_name = os.path.join(os.getcwd(),'kratos_results_data', output_file_name)
 
-            #the Young modulus files
-            aim_path_and_name = os.path.join(os.getcwd(),'Generated_kratos_cases', aim_folder_name, 'G-Triaxial_Graphs', 'G-Triaxial_graph_young.grf')
+            indiv_data_head = ['confining_pressure','texture_angle','strong_p_E', 'strong_b_E', 'strong_b_knks', \
+                               'weak_p_E', 'weak_b_E', 'weak_b_knks', 'strong_b_n_max', 'strong_b_t_max', \
+                                'strong_b_phi', 'weak_b_n_max', 'weak_b_t_max', 'weak_b_phi', 'strength_max', 'strain_max', 'young_modulus_max']
 
-            if os.path.getsize(aim_path_and_name) != 0:
-                strain_data_list = []
-                young_data_list = []
-                with open(aim_path_and_name, 'r') as young_data:
-                    for line in young_data:
-                        values = [float(s) for s in line.split()]
-                        strain_data_list.append(values[0])
-                        young_data_list.append(values[1]) 
-                if max(strain_data_list) > 0.6:
-                    young_cnt = 0
-                    young_select_sum = 0.0
-                    for strain_data in strain_data_list:
-                        if strain_data > 0.4 and strain_data < 0.6:
-                            young_select_sum += young_data_list[strain_data_list.index(strain_data)]
-                            young_cnt += 1
-                    young_modulus_max = young_select_sum / young_cnt
-                else:
-                    young_modulus_max = max(young_data_list)
-                rel_error_young_modulus = ((young_modulus_max - self.aim_young_modulus) / self.aim_young_modulus)**2
-            else:
-                young_modulus_max = 0.0
-                rel_error_young_modulus = (self.aim_young_modulus)**2
+            for confining_pressure in self.confining_pressure_list:
+
+                for texture_angle in self.texture_angle_list:
+
+                    #creat new folder
+                    aim_folder_name = 'G' + str(g_count) + '_' + str(confining_pressure) + '_' + str(texture_angle) + '_' \
+                                        + strong_p_E + '_' + strong_b_E + '_' + strong_b_knks + '_'\
+                                        + weak_p_E + '_' + weak_b_E + '_' + weak_b_knks + '_'\
+                                        + strong_b_n_max + '_' + strong_b_t_max + '_' + strong_b_phi + '_'\
+                                        + weak_b_n_max + '_' + weak_b_t_max + '_' + weak_b_phi
+                    #the strength files
+                    aim_path_and_name = os.path.join(os.getcwd(),'Generated_kratos_cases', aim_folder_name, 'G-Triaxial_Graphs', 'G-Triaxial_graph.grf')
+
+                    if os.path.getsize(aim_path_and_name) != 0:
+                        stress_data_list = []
+                        strain_data_list = []
+                        with open(aim_path_and_name, 'r') as stress_strain_data:
+                            for line in stress_strain_data:
+                                values = [float(s) for s in line.split()]
+                                stress_data_list.append(values[1]) 
+                                strain_data_list.append(values[0])
+                        strength_max = max(stress_data_list)
+                        strain_max = strain_data_list[stress_data_list.index(max(stress_data_list))]
+                        rel_error_strength += ((strength_max - self.aim_strength) / self.aim_strength)**2
+                        rel_error_starin   += ((strain_max - self.aim_strain) / self.aim_strain)**2
+                    else:
+                        strength_max = 0.0
+                        strain_max = 0.0
+                        rel_error_strength += (self.aim_strength)**2
+                        rel_error_starin   += (self.aim_strain)**2
+
+                    #the Young modulus files
+                    aim_path_and_name = os.path.join(os.getcwd(),'Generated_kratos_cases', aim_folder_name, 'G-Triaxial_Graphs', 'G-Triaxial_graph_young.grf')
+
+                    if os.path.getsize(aim_path_and_name) != 0:
+                        strain_data_list = []
+                        young_data_list = []
+                        with open(aim_path_and_name, 'r') as young_data:
+                            for line in young_data:
+                                values = [float(s) for s in line.split()]
+                                strain_data_list.append(values[0])
+                                young_data_list.append(values[1]) 
+                        if max(strain_data_list) > 0.6:
+                            young_cnt = 0
+                            young_select_sum = 0.0
+                            for strain_data in strain_data_list:
+                                if strain_data > 0.4 and strain_data < 0.6:
+                                    young_select_sum += young_data_list[strain_data_list.index(strain_data)]
+                                    young_cnt += 1
+                            young_modulus_max = young_select_sum / young_cnt
+                        else:
+                            young_modulus_max = max(young_data_list)
+                        rel_error_young_modulus += ((young_modulus_max - self.aim_young_modulus) / self.aim_young_modulus)**2
+                    else:
+                        young_modulus_max = 0.0
+                        rel_error_young_modulus += (self.aim_young_modulus)**2
+
+                    #write out indiv information
+                    indiv_data = []
+                    with open(output_aim_path_and_name, "a+", encoding='UTF8', newline='') as f_w:
+                        writer = csv.writer(f_w)
+                        indiv_data.append(confining_pressure)
+                        indiv_data.append(texture_angle)
+                        indiv_data.append(strong_p_E)
+                        indiv_data.append(strong_b_E)
+                        indiv_data.append(strong_b_knks)
+                        indiv_data.append(weak_p_E)
+                        indiv_data.append(weak_b_E)
+                        indiv_data.append(weak_b_knks)
+                        indiv_data.append(strong_b_n_max)
+                        indiv_data.append(strong_b_t_max)
+                        indiv_data.append(strong_b_phi)
+                        indiv_data.append(weak_b_n_max)
+                        indiv_data.append(weak_b_t_max)
+                        indiv_data.append(weak_b_phi)
+                        indiv_data.append(strength_max)
+                        indiv_data.append(strain_max)
+                        indiv_data.append(young_modulus_max)
+                        if self.indiv_data_head_not_written:
+                            writer.writerow(indiv_data_head)
+                            self.indiv_data_head_not_written = False
+                        writer.writerow(indiv_data)
+                        f_w.close()
 
             if rel_error_strength + rel_error_young_modulus + rel_error_starin:
                 fitness = 1 / (rel_error_strength + rel_error_young_modulus + rel_error_starin)
@@ -547,27 +609,6 @@ class GA:
                 fitness = 0
 
             indiv_['fitness'] = fitness
-
-            #write out individual data for ML
-            output_file_name = 'G_info.csv' 
-            aim_path_and_name = os.path.join(os.getcwd(),'kratos_results_data', output_file_name)
-
-            indiv_data_head = ['Young_mudulus_particle', 'Young_mudulus_bond', 'sigma_max_bond', 'cohesion_ini_bond', 'strength_max', 'strain_max', 'young_modulus_max']
-            indiv_data = []
-            with open(aim_path_and_name, "a+", encoding='UTF8', newline='') as f_w:
-                writer = csv.writer(f_w)
-                indiv_data.append(indiv_['Gene'].data[0])
-                indiv_data.append(indiv_['Gene'].data[1])
-                indiv_data.append(indiv_['Gene'].data[2])
-                indiv_data.append(indiv_['Gene'].data[3])
-                indiv_data.append(strength_max)
-                indiv_data.append(strain_max)
-                indiv_data.append(young_modulus_max)
-                if self.indiv_data_head_not_written:
-                    writer.writerow(indiv_data_head)
-                    self.indiv_data_head_not_written = False
-                writer.writerow(indiv_data)
-                f_w.close()
 
         return nextoff
     
