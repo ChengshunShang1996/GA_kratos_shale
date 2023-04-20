@@ -880,7 +880,7 @@ class GA:
         self.log_export_file.close()
  
 if __name__ == "__main__":
-    CXPB, MUTPB, NGEN, popsize = 0.8, 0.2, 500, 200  # popsize must be even number
+    CXPB, MUTPB, NGEN, popsize = 0.8, 0.2, 50, 100  # popsize must be even number
     #aim_strength, aim_young_modulus = 4.323e7, 5.54e9
     #aim_strain = 1.01265
 
