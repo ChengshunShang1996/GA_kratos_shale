@@ -74,7 +74,15 @@ class GA:
         x2 = geneinfo[1]
         x3 = geneinfo[2]
         x4 = geneinfo[3]
-        y = 1 / ((x1**2 + x2**2 + x3**2 + x4**2) * 1e5) #set the initial fitness a very small value
+        x5 = geneinfo[4]
+        x6 = geneinfo[5]
+        x7 = geneinfo[6]
+        x8 = geneinfo[7]
+        x9 = geneinfo[8]
+        x10 = geneinfo[9]
+        x11 = geneinfo[10]
+        x12 = geneinfo[11]
+        y = 1 / ((x1**2 + x2**2 + x3**2 + x4**2 + x5**2 + x6**2 + x7**2 + x8**2 + x9**2 + x10**2 + x11**2 + x12**2) * 1e5) #set the initial fitness a very small value
         return y
     
     def evaluate_in(self, geneinfo, ML_xgb_4, run_ml_4, ML_xgb_5):
@@ -93,18 +101,33 @@ class GA:
         x10 = geneinfo[9]
         x11 = geneinfo[10]
         x12 = geneinfo[11]
-        x13 = geneinfo[12]
-        x14 = geneinfo[13]
-        x15 = geneinfo[14]
-        x16 = geneinfo[15]
-        X_test = [[x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16]]
-        X_test = run_ml_4.my_normalizer(X_test, self.parameter[4], self.parameter[5])
 
-        predicted_strength = ML_xgb_4.predict(X_test)
-        predicted_young_modulus = ML_xgb_5.predict(X_test)
+        low = self.parameter[4]
+        low.insert(0, 0)
+        low.insert(0, 0)
+        up = self.parameter[5]
+        up.insert(0, 90)
+        up.insert(0, 15e6)
 
-        rel_error_strength = ((predicted_strength - self.aim_strength) / self.aim_strength)**2
-        rel_error_young_modulus = ((predicted_young_modulus - self.aim_young_modulus) / self.aim_young_modulus)**2
+        aim_value_index_i = aim_value_index_j = 0
+
+        for confining_pressure in self.confining_pressure_list:
+
+            for texture_angle in self.texture_angle_list:
+
+                X_test = [[confining_pressure, texture_angle, x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12]]
+                X_test = run_ml_4.my_normalizer(X_test, low, up)
+
+                predicted_strength = ML_xgb_4.predict(X_test)
+                predicted_young_modulus = ML_xgb_5.predict(X_test)
+                
+                rel_error_strength += ((predicted_strength - self.aim_strength[aim_value_index_i][aim_value_index_j]) / self.aim_strength[aim_value_index_i][aim_value_index_j])**2
+                if not (aim_value_index_i == 0 and aim_value_index_j == 1):
+                    rel_error_young_modulus += ((predicted_young_modulus - self.aim_young_modulus[aim_value_index_i][aim_value_index_j]) / self.aim_young_modulus[aim_value_index_i][aim_value_index_j])**2
+            
+            aim_value_index_i += 1
+
+        aim_value_index_j += 1
 
         if rel_error_strength + rel_error_young_modulus:
             fitness = 1 / (rel_error_strength + rel_error_young_modulus)
@@ -571,20 +594,25 @@ class GA:
                                 values = [float(s) for s in line.split()]
                                 strain_data_list.append(values[0])
                                 young_data_list.append(values[1]) 
-                        if max(strain_data_list) > 0.6:
+                        strain_max = strain_data_list[stress_data_list.index(max(stress_data_list))]
+                        if max(strain_data_list) > 0.2:
                             young_cnt = 0
                             young_select_sum = 0.0
                             for strain_data in strain_data_list:
-                                if strain_data > 0.4 and strain_data < 0.6:
+                                if strain_data > 0.3 * strain_max and strain_data < 0.5 * strain_max:
                                     young_select_sum += young_data_list[strain_data_list.index(strain_data)]
                                     young_cnt += 1
                             young_modulus_max = young_select_sum / young_cnt
                         else:
                             young_modulus_max = max(young_data_list)
-                        rel_error_young_modulus += ((young_modulus_max - self.aim_young_modulus[aim_value_index_i][aim_value_index_j]) / self.aim_young_modulus[aim_value_index_i][aim_value_index_j])**2
+
+                        if not (aim_value_index_i == 0 and aim_value_index_j == 1):
+                            rel_error_young_modulus += ((young_modulus_max - self.aim_young_modulus[aim_value_index_i][aim_value_index_j]) / self.aim_young_modulus[aim_value_index_i][aim_value_index_j])**2
                     else:
                         young_modulus_max = 0.0
-                        rel_error_young_modulus += (self.aim_young_modulus[aim_value_index_i][aim_value_index_j])**2
+
+                        if not (aim_value_index_i == 0 and aim_value_index_j == 1):
+                            rel_error_young_modulus += (self.aim_young_modulus[aim_value_index_i][aim_value_index_j])**2
 
                     #write out indiv information
                     indiv_data = []

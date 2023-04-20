@@ -51,10 +51,10 @@ class MachineLearning():
             i = self.df[(self.df.strength_max == num)].index
             self.df = self.df.drop(i)
 
-        outlier_list = self.Zscore_outlier(self.df["strain_max"])
-        for num in outlier_list:
-            i = self.df[(self.df.strain_max == num)].index
-            self.df = self.df.drop(i)
+        #outlier_list = self.Zscore_outlier(self.df["strain_max"])
+        #for num in outlier_list:
+        #    i = self.df[(self.df.strain_max == num)].index
+        #    self.df = self.df.drop(i)
 
         outlier_list = self.Zscore_outlier(self.df["young_modulus_max"])
         for num in outlier_list:
@@ -81,7 +81,8 @@ class MachineLearning():
         return X_train, Y_train, X_test, Y_test
 
     def xgboost_model_training(self, X_train, Y_train, X_test, Y_test):
-        xgb = XGBRegressor(booster='gbtree', max_depth=40, learning_rate=0.2, reg_alpha=0.01, n_estimators=2000, gamma=0.1, min_child_weight=1)
+        #xgb = XGBRegressor(booster='gbtree', max_depth=40, learning_rate=0.2, reg_alpha=0.01, n_estimators=2000, gamma=0.1, min_child_weight=1)
+        xgb = XGBRegressor(booster='gbtree')
         xgb.fit(X_train,Y_train)
 
         pre = xgb.predict(X_test)
@@ -128,7 +129,7 @@ class MachineLearning():
         return df
     
     def select_prediction_parameter(self, parameter, data_min_list, data_max_list):
-        X = self.data_array[:, :4]
+        X = self.data_array[:, :13]
         X = self.my_normalizer(X, data_min_list, data_max_list)
         # X_train = data_array[:, :5] 
         # X_train = data_array[:, :6]
