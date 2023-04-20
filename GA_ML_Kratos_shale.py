@@ -511,11 +511,11 @@ class GA:
                                 else:
                                     shutil.copyfile(seed_file_path_and_name, aim_file_path_and_name)
 
-                # write the cases_run.sh
-                if aim_path_change_marker == 0:
-                    f_w_cases_run.write('cd '+ aim_path + '\n')
-                    f_w_cases_run.write('sbatch run_omp.sh' + '\n')
-                    self.end_sim_file_num += 1
+                    # write the cases_run.sh
+                    if aim_path_change_marker == 0:
+                        f_w_cases_run.write('cd '+ aim_path + '\n')
+                        f_w_cases_run.write('sbatch run_omp.sh' + '\n')
+                        self.end_sim_file_num += 1
 
     def run_kratos_cases(self):
         self.log_export_file.write('Running kratos cases ...' + '\n')
