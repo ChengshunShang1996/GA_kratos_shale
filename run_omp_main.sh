@@ -3,7 +3,7 @@
 #SBATCH --output=GA_XGBoost_Controller%j.out
 #SBATCH --error=GA_XGBoost_Controller%j.err
 #SBATCH --partition=HighParallelization
-#SBATCH --ntasks-per-node=2
+#SBATCH --ntasks-per-node=4
 
 ##Optional - Required memory in MB per node, or per core. Defaults are 1GB per core.
 ##SBATCH --mem=3096
@@ -16,6 +16,6 @@
 #SBATCH --time=10-0
 
 ########### Further details -> man sbatch ##########
-#export OMP_NUM_THREADS=2
+#export OMP_NUM_THREADS=4
 
 python3 GA_ML_Kratos_shale.py
