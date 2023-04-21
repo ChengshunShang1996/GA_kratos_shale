@@ -405,7 +405,35 @@ class GA:
                                             f_run_omp_w.write(line)
                             else:
                                 shutil.copyfile(seed_file_path_and_name, aim_file_path_and_name) 
-                    
+
+                        # write the cases_run.sh
+                        if aim_path_change_marker == 0:
+                            nodes_num = 10
+                            partition_name = 'HighParallelization'
+                            self.end_sim_file_num += 1
+                            new_sh_marker = self.end_sim_file_num // nodes_num
+                            if new_sh_marker > self.sh_marker:
+                                self.sh_marker = new_sh_marker
+                                self.is_sh_head_write = False
+                            sh_file_name = 'cases_run_' + str(self.sh_marker) + '.sh'
+
+                            # creat the cases_run.sh
+                            cases_run_path_and_name = os.path.join(os.getcwd(), 'kratos_results_data_temp', sh_file_name)
+
+                            with open(cases_run_path_and_name, "a") as f_w_cases_run:
+                                if self.is_sh_head_write == False:
+                                    f_w_cases_run.write('#!/bin/bash'+'\n')
+                                    f_w_cases_run.write('#SBATCH --job-name=Generation_'+ str(g_count) + '_part_'+ str(self.sh_marker) +'\n')
+                                    f_w_cases_run.write('#SBATCH --output=chengshun_job%j.out'+'\n')
+                                    f_w_cases_run.write('#SBATCH --error=chengshun_job%j.err'+'\n')
+                                    f_w_cases_run.write('#SBATCH --partition='+ partition_name +'\n')
+                                    f_w_cases_run.write('#SBATCH --ntasks-per-node='+str(nodes_num)+'\n')
+                                    f_w_cases_run.write('#SBATCH --nodes=1'+'\n'+'\n')
+                                    self.is_sh_head_write = True
+                                f_w_cases_run.write('cd '+ aim_path + '\n')
+                                f_w_cases_run.write('python3 '+ 'decompressed_material_triaxial_test_PBM_GA_230413.py' + '\n')
+                            f_w_cases_run.close()
+
                     else: #confining pressure > 0.0
 
                         #creat new folder
@@ -509,37 +537,65 @@ class GA:
                             else:
                                 shutil.copyfile(seed_file_path_and_name, aim_file_path_and_name)
 
-                # write the cases_run.sh
-                if aim_path_change_marker == 0:
-                    nodes_num = 10
-                    partition_name = 'HighParallelization'
-                    self.end_sim_file_num += 1
-                    new_sh_marker = self.end_sim_file_num // nodes_num
-                    if new_sh_marker > self.sh_marker:
-                        self.sh_marker = new_sh_marker
-                        self.is_sh_head_write = False
-                    sh_file_name = 'cases_run_' + str(self.sh_marker) + '.sh'
+                        # write the cases_run.sh
+                        if aim_path_change_marker == 0:
+                            nodes_num = 10
+                            partition_name = 'HighParallelization'
+                            self.end_sim_file_num += 1
+                            new_sh_marker = self.end_sim_file_num // nodes_num
+                            if new_sh_marker > self.sh_marker:
+                                self.sh_marker = new_sh_marker
+                                self.is_sh_head_write = False
+                            sh_file_name = 'cases_run_' + str(self.sh_marker) + '.sh'
 
-                    # creat the cases_run.sh
-                    cases_run_path_and_name = os.path.join(os.getcwd(), sh_file_name)
+                            # creat the cases_run.sh
+                            cases_run_path_and_name = os.path.join(os.getcwd(), 'kratos_results_data_temp', sh_file_name)
 
-                    with open(cases_run_path_and_name, "a") as f_w_cases_run:
-                        if self.is_sh_head_write == False:
-                            f_w_cases_run.write('#!/bin/bash'+'\n')
-                            f_w_cases_run.write('#SBATCH --job-name=Generation_'+ str(g_count) + '_part_'+ str(self.sh_marker) +'\n')
-                            f_w_cases_run.write('#SBATCH --output=chengshun_job%j.out'+'\n')
-                            f_w_cases_run.write('#SBATCH --error=chengshun_job%j.err'+'\n')
-                            f_w_cases_run.write('#SBATCH --partition='+ partition_name +'\n')
-                            f_w_cases_run.write('#SBATCH --ntasks-per-node='+str(nodes_num)+'\n')
-                            f_w_cases_run.write('#SBATCH --nnodes=1'+'\n')
-                            self.is_sh_head_write = True
-                        f_w_cases_run.write('python3 '+ aim_path + '/MainKratos.py' + '\n')
-                    f_w_cases_run.close()
+                            with open(cases_run_path_and_name, "a") as f_w_cases_run:
+                                if self.is_sh_head_write == False:
+                                    f_w_cases_run.write('#!/bin/bash'+'\n')
+                                    f_w_cases_run.write('#SBATCH --job-name=Generation_'+ str(g_count) + '_part_'+ str(self.sh_marker) +'\n')
+                                    f_w_cases_run.write('#SBATCH --output=chengshun_job%j.out'+'\n')
+                                    f_w_cases_run.write('#SBATCH --error=chengshun_job%j.err'+'\n')
+                                    f_w_cases_run.write('#SBATCH --partition='+ partition_name +'\n')
+                                    f_w_cases_run.write('#SBATCH --ntasks-per-node='+str(nodes_num)+'\n')
+                                    f_w_cases_run.write('#SBATCH --nodes=1'+'\n'+'\n')
+                                    self.is_sh_head_write = True
+                                f_w_cases_run.write('cd '+ aim_path + '\n')
+                                f_w_cases_run.write('python3 '+ 'MainKratos.py' + '\n')
+                            f_w_cases_run.close()
 
-    def run_kratos_cases(self):
+    def run_kratos_cases(self, g):
         self.log_export_file.write('Running kratos cases ...' + '\n')
-        command_execution = 'sh cases_run.sh'
-        os.system(command_execution)
+        #submit 10 jobs at begining
+        for i in range(1,11):
+            cases_run_name = 'cases_run_' + str(i) + '.sh'
+            command_execution = 'sh ' + cases_run_name
+            os.system(command_execution)
+
+        file_num = 0
+        time_count = 0
+        end_job_cnt = 0
+        nodes_num = 10
+        while file_num != self.end_sim_file_num:
+            aim_path_and_folder = os.path.join(os.getcwd(),'kratos_results_data_temp')
+            file_num = len(glob.glob1(aim_path_and_folder,"*.txt"))
+            time.sleep(30)
+            self.log_export_file.write('-----Waiting for kratos cases -----' + '\n')
+            time_count += 0.5 
+            self.log_export_file.write('-------Generation {} cost {} min(s)-------'.format(g, time_count) + '\n')
+            self.log_export_file.flush()
+
+            new_end_job_cnt = file_num // nodes_num
+            if new_end_job_cnt > end_job_cnt:
+                new_add_end_cnt = new_end_job_cnt - end_job_cnt
+                end_job_cnt = new_end_job_cnt
+                if end_job_cnt != 0:
+                    for j in range (0, new_add_end_cnt):
+                        i += 1
+                        cases_run_name = 'cases_run_' + str(i) + '.sh'
+                        command_execution = 'sh ' + cases_run_name
+                        os.system(command_execution)
     
     def read_kratos_results_and_add_fitness(self, g_count, nextoff):
         
@@ -781,11 +837,12 @@ class GA:
             #generate kratos cases according to pop 
             self.generate_kratos_cases(g, nextoff)
 
-            self.run_kratos_cases()
+            self.run_kratos_cases(g)
 
             self.log_export_file.flush()
 
             #check whether all the kratos cases in this generation finished
+            '''
             file_num = 0
             time_count = 0
             while file_num != self.end_sim_file_num:
@@ -796,6 +853,7 @@ class GA:
                 time_count += 0.5
                 self.log_export_file.write('-------Generation {} cost {} min(s)-------'.format(g, time_count) + '\n')
                 self.log_export_file.flush()
+            '''
 
             #add fitness to nextoff
             nextoff = self.read_kratos_results_and_add_fitness(g, nextoff)
