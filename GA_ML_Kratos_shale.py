@@ -560,6 +560,7 @@ class GA:
 
     def run_kratos_cases(self, g):
         self.log_export_file.write('Running kratos cases ...' + '\n')
+        self.log_export_file.flush()
         #submit 10 jobs at begining
         for i in range(1,11):
             cases_run_name = 'cases_run_' + str(i) + '.sh'
@@ -587,7 +588,7 @@ class GA:
                     for j in range (0, new_add_end_cnt):
                         i += 1
                         cases_run_name = 'cases_run_' + str(i) + '.sh'
-                        command_execution = 'sh ' + cases_run_name
+                        command_execution = 'sbatch kratos_results_data_temp/' + cases_run_name
                         os.system(command_execution)
     
     def read_kratos_results_and_add_fitness(self, g_count, nextoff):
