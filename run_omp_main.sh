@@ -2,7 +2,7 @@
 #SBATCH --job-name=GA_XGBoost_Controller_Hola_Barcelona
 #SBATCH --output=GA_XGBoost_Controller%j.out
 #SBATCH --error=GA_XGBoost_Controller%j.err
-#SBATCH --partition=HighParallelization
+#SBATCH --partition=HM
 #SBATCH --ntasks-per-node=4
 
 ##Optional - Required memory in MB per node, or per core. Defaults are 1GB per core.
