@@ -67,7 +67,7 @@ class DEMWrapper(kratos_base_wrapper.KratosBaseWrapper):
             def FinalizeSolutionStep(self):
                 super().FinalizeSolutionStep()
                 self.MeasureForcesAndPressure()
-                self.CheckSimulationEnd()
+                #self.CheckSimulationEnd()
 
             def Finalize(self):
                 super().Finalize()
@@ -195,7 +195,8 @@ class DEMWrapper(kratos_base_wrapper.KratosBaseWrapper):
             def MeasureForcesAndPressure(self):
 
                 dt = self.parameters["MaxTimeStep"].GetDouble()
-                strain_delta = -100 * self.length_correction_factor * self.LoadingVelocity * dt / self.height
+                if self.time > 0.005:
+                    strain_delta = -100 * self.length_correction_factor * self.LoadingVelocity * dt / self.height
                 self.strain += strain_delta
 
                 total_force_top = 0.0
@@ -224,14 +225,14 @@ class DEMWrapper(kratos_base_wrapper.KratosBaseWrapper):
                     self.last_strain_mean_for_young_cal = self.strain
                 self.young_cal_counter += 1
 
-                if self.total_stress_mean_max < self.total_stress_mean:
+                if self.total_stress_mean_max <= self.total_stress_mean:
                     self.total_stress_mean_max = self.total_stress_mean
                     self.total_stress_mean_max_time = self.time
 
             def CheckSimulationEnd(self):
 
                 #if self.total_stress_mean_max_time < 0.5 * self.time or self.strain > 5.0:
-                if self.total_stress_mean_max_time < 0.5 * self.time or self.strain > 4.0:
+                if self.total_stress_mean_max_time < 0.5 * self.time or self.strain > 2.0:
                     self.end_sim = 2   # means end the simulation
                     
             def PrintGraph(self, time):
@@ -279,6 +280,12 @@ class DEMWrapper(kratos_base_wrapper.KratosBaseWrapper):
                     marker_file.write('HOLA Barcelona!'+'\n')
                 marker_file.close()
 
+            def GetStrain(self):
+                return self.strain
+            
+            def GetTotalStressMeanMaxTime(self):
+                return self.total_stress_mean_max_time
+
         dem_analysis_module = CoTriaxialTest
 
         return dem_analysis_module(self.model, self.project_parameters)
@@ -297,3 +304,10 @@ class DEMWrapper(kratos_base_wrapper.KratosBaseWrapper):
         # solve DEM
         super().SolveSolutionStep()
 
+    def GetStrain(self):
+        with self.thread_manager:
+            return self._analysis_stage.GetStrain()
+        
+    def GetTotalStressMeanMaxTime(self):
+        with self.thread_manager:
+            return self._analysis_stage.GetTotalStressMeanMaxTime()

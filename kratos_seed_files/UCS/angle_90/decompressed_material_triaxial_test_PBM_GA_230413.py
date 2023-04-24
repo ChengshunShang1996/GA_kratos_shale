@@ -303,7 +303,7 @@ class DecompressedMaterialTriaxialTest(DEMAnalysisStage):
     def CheckSimulationEnd(self):
 
         #if self.total_stress_mean_max_time < 0.5 * self.time or self.strain > 5.0:
-        if self.total_stress_mean_max_time < 0.5 * self.time or self.strain > 6.0:
+        if self.total_stress_mean_max_time < 0.5 * self.time or self.strain > 8.0:
             self.end_sim = 2   # means end the simulation
 
     def ComputeMeasuringSurface(self):

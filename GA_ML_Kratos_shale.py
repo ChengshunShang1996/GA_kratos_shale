@@ -449,10 +449,10 @@ class GA:
 
                         #copy source file
                         texture_angle_folder = 'angle_' + str(texture_angle)
-                        seed_file_name_list = ['dem_wrapper_cshang_230417.py', 'FEM_membrane.mdpa','G-TriaxialDEM.mdpa',\
+                        seed_file_name_list = ['dem_wrapper_cshang_230424.py', 'FEM_membrane.mdpa','G-TriaxialDEM.mdpa',\
                                                 'G-TriaxialDEM_FEM_boundary.mdpa', 'MainKratos.py', 'MaterialsDEM.json', \
                                                 'ProjectParametersCoSim.json', 'ProjectParametersDEM.json', 'ProjectParametersFEM.json',\
-                                                'StructuralMaterials.json','run_omp.sh']
+                                                'StructuralMaterials.json','gauss_seidel_weak_cshang_230424.py']
                         for seed_file_name in seed_file_name_list:
                             seed_file_path_and_name = os.path.join(os.getcwd(),'kratos_seed_files','Triaxial', texture_angle_folder, seed_file_name)
                             aim_file_path_and_name = os.path.join(aim_path, seed_file_name)
@@ -526,14 +526,6 @@ class GA:
                                             if "-1000000.0*t" in line:
                                                 line = line.replace("-1000000.0", str(confining_pressure))
                                             f_parameter_w.write(line)
-                            elif seed_file_name == 'run_omp.sh':
-                                with open(seed_file_path_and_name, "r") as f_run_omp:
-                                    with open(aim_file_path_and_name, "w") as f_run_omp_w:
-                                        for line in f_run_omp.readlines():
-                                            if "BTS-Q-Ep6.2e10-T1e3-f0.1" in line:
-                                                hpc_case_name = os.path.basename(aim_path)
-                                                line = line.replace("BTS-Q-Ep6.2e10-T1e3-f0.1", hpc_case_name)
-                                            f_run_omp_w.write(line)
                             else:
                                 shutil.copyfile(seed_file_path_and_name, aim_file_path_and_name)
 
@@ -562,7 +554,7 @@ class GA:
                                     f_w_cases_run.write('#SBATCH --nodes=1'+'\n'+'\n')
                                     self.is_sh_head_write = True
                                 f_w_cases_run.write('cd '+ aim_path + '\n')
-                                f_w_cases_run.write('python3 '+ 'MainKratos.py' + '\n')
+                                f_w_cases_run.write('python3 '+ 'MainKratos_230424.py' + '\n')
                             f_w_cases_run.close()
 
     def run_kratos_cases(self, g):

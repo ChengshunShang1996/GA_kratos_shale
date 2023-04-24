@@ -9,8 +9,8 @@ Check also "kratos/python_scripts/analysis_stage.py" for available methods that 
 
 class AutoEndCoSimulationAnalysis(CoSimulationAnalysis):
 
-    def __init__(self, model, parameters):
-        super().__init__(model, parameters)
+    def __init__(self, parameters, models=None):
+        super().__init__(parameters)
         self.end_sim = 0
 
     def RunSolutionLoop(self):
@@ -32,11 +32,11 @@ class AutoEndCoSimulationAnalysis(CoSimulationAnalysis):
         return (self.time < self.end_time and self.end_sim < 1)
     
     def CheckSimulationEnd(self):
-
+       
         total_stress_mean_max_time = self._GetSolver().GetTotalStressMeanMaxTime()
         strain = self._GetSolver().GetStrain()
 
-        if total_stress_mean_max_time < 0.5 * self.time or strain > 2.0:
+        if total_stress_mean_max_time < 0.5 * self.time or strain > 8.0:
             self.end_sim = 2   # means end the simulation
 
 parameter_file_name = "ProjectParametersCoSim.json"

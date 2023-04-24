@@ -2,14 +2,14 @@
     "problem_data" :
     {
         "start_time" : 0.0,
-        "end_time" : 1.0,
+        "end_time" : 10.0,
         "echo_level" : 0,
         "print_colors" : true,
         "parallel_type" : "OpenMP"
     },
     "solver_settings" :
     {
-        "type" : "coupled_solvers.gauss_seidel_weak",
+        "type" : "gauss_seidel_weak_cshang_230424",
         "echo_level" : 0,
         "data_transfer_operators" : {
             "mapper_1" : {
@@ -56,7 +56,7 @@
         {
             "dem":
             {
-                "type" : "dem_wrapper_cshang_230417",
+                "type" : "dem_wrapper_cshang_230424",
                 "solver_wrapper_settings" : {
                     "input_file"           : "ProjectParametersDEM",
                     "move_mesh_model_part" : ["RigidFacePart.Parts_Membrane_Membrane_Auto1"]
