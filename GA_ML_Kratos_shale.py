@@ -450,7 +450,7 @@ class GA:
                         #copy source file
                         texture_angle_folder = 'angle_' + str(texture_angle)
                         seed_file_name_list = ['dem_wrapper_cshang_230424.py', 'FEM_membrane.mdpa','G-TriaxialDEM.mdpa',\
-                                                'G-TriaxialDEM_FEM_boundary.mdpa', 'MainKratos.py', 'MaterialsDEM.json', \
+                                                'G-TriaxialDEM_FEM_boundary.mdpa', 'MainKratos_230424.py', 'MaterialsDEM.json', \
                                                 'ProjectParametersCoSim.json', 'ProjectParametersDEM.json', 'ProjectParametersFEM.json',\
                                                 'StructuralMaterials.json','gauss_seidel_weak_cshang_230424.py']
                         for seed_file_name in seed_file_name_list:
