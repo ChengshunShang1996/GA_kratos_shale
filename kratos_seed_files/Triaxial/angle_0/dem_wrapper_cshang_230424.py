@@ -195,6 +195,7 @@ class DEMWrapper(kratos_base_wrapper.KratosBaseWrapper):
             def MeasureForcesAndPressure(self):
 
                 dt = self.parameters["MaxTimeStep"].GetDouble()
+                strain_delta = 0.0
                 if self.time > 0.005:
                     strain_delta = -100 * self.length_correction_factor * self.LoadingVelocity * dt / self.height
                 self.strain += strain_delta
