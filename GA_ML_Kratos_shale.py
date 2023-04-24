@@ -562,7 +562,7 @@ class GA:
         #submit 10 jobs at begining
         for i in range(1,11):
             cases_run_name = 'cases_run_' + str(i) + '.sh'
-            command_execution = 'sh ' + cases_run_name
+            command_execution = 'sbatch /kratos_data_temp/' + cases_run_name
             os.system(command_execution)
 
         file_num = 0
