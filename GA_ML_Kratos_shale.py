@@ -283,6 +283,7 @@ class GA:
     def generate_kratos_cases(self, g_count, nextoff):
 
         self.log_export_file.write('Generating kratos cases ...' + '\n')
+        self.log_export_file.flush()
         self.end_sim_file_num = 0
         self.is_sh_head_write = False
         self.sh_marker = 0
@@ -781,6 +782,7 @@ class GA:
             self.clear_old_and_creat_new_kratos_case_folder()
             
             self.log_export_file.write("############### Generation {} ###############".format(g) + '\n')
+            self.log_export_file.flush()
  
             if g != 0:
                 # Apply selection based on their converted fitness
