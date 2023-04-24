@@ -409,7 +409,7 @@ class GA:
                         # write the cases_run.sh
                         if aim_path_change_marker == 0:
                             nodes_num = 10
-                            partition_name = 'HighParallelization'
+                            partition_name = 'HM'
                             self.end_sim_file_num += 1
                             new_sh_marker = self.end_sim_file_num // nodes_num
                             if new_sh_marker > self.sh_marker:
