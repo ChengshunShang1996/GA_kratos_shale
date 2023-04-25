@@ -578,6 +578,7 @@ class GA:
             self.log_export_file.write('-----Waiting for kratos cases -----' + '\n')
             time_count += 0.5 
             self.log_export_file.write('-------Generation {} cost {} min(s)-------'.format(g, time_count) + '\n')
+            self.log_export_file.write('-------file_num is {} and end_sim_file_num is {} -------'.format(file_num, self.end_sim_file_num) + '\n')
             self.log_export_file.flush()
 
             new_end_job_cnt = file_num // nodes_num
