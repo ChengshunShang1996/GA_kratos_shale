@@ -744,7 +744,9 @@ class GA:
 
         with open(aim_path_and_name, "a+") as f_w:
             f_w.write(str(g_count) + ' ' + str(best_individual['Gene'].data[0])+ ' ' + str(best_individual['Gene'].data[1])+ ' ' + str(best_individual['Gene'].data[2])\
-                      + ' ' + str(best_individual['Gene'].data[3]) + '\n')
+                      + ' ' + str(best_individual['Gene'].data[3]) + ' ' + str(best_individual['Gene'].data[4])+ ' ' + str(best_individual['Gene'].data[5]) \
+                      + ' ' + str(best_individual['Gene'].data[6]) + ' ' + str(best_individual['Gene'].data[7])+ ' ' + str(best_individual['Gene'].data[8]) \
+                      + ' ' + str(best_individual['Gene'].data[9]) + ' ' + str(best_individual['Gene'].data[10])+ ' ' + str(best_individual['Gene'].data[11]) + '\n')
         f_w.close()
         
         #plot and save
@@ -910,7 +912,11 @@ class GA:
 
             ############# ML part################
             data_min_list = self.parameter[4]
+            data_min_list.insert(0, 0)
+            data_min_list.insert(0, 0)
             data_max_list = self.parameter[5]
+            data_max_list.insert(0, 90)
+            data_max_list.insert(0, 15e6)
 
             #strength predictor
             predict_index = 14
