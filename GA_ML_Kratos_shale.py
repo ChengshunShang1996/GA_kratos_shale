@@ -111,6 +111,7 @@ class GA:
         up.insert(0, 15e6)
 
         aim_value_index_i = aim_value_index_j = 0
+        rel_error_strength = rel_error_young_modulus = 0.0
 
         for confining_pressure in self.confining_pressure_list:
 
