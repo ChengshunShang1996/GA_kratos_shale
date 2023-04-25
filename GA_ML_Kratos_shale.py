@@ -976,6 +976,7 @@ class GA:
             self.log_export_file.flush()
             
         self.final_clear_kratos_case_and_data_folder()
+        self.clear_old_out_files()
         self.log_export_file.write("------ End of (successful) evolution ------" + '\n')
         self.log_export_file.flush()
         self.log_export_file.close()
