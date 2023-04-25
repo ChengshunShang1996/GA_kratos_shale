@@ -32,7 +32,7 @@ class MachineLearning():
     def __init__(self) -> None:
 
         #read data file
-        #data_file = 'data.csv' 
+        #data_file = 'G_info.csv' 
         file_name = 'G_info.csv' 
         data_file = os.path.join(os.getcwd(),'kratos_results_data', file_name)
         self.df = pd.read_csv(data_file)
@@ -129,7 +129,7 @@ class MachineLearning():
         return df
     
     def select_prediction_parameter(self, parameter, data_min_list, data_max_list):
-        X = self.data_array[:, :13]
+        X = self.data_array[:, :14]
         X = self.my_normalizer(X, data_min_list, data_max_list)
         # X_train = data_array[:, :5] 
         # X_train = data_array[:, :6]
@@ -171,26 +171,20 @@ class MachineLearning():
     
 if __name__ == "__main__":
     
-    data_min_list = [5e8, 5e8, 1e6, 1e6,]
-    data_max_list = [1e11, 1e11, 1e8, 1e8]
+    data_min_list = [0, 0, 5e8, 5e8, 1, 5e8, 5e8, 1, 2e6, 2e6, 0, 2e6, 2e6, 0]
+    data_max_list = [15e6, 90, 1e11, 1e11, 3, 1e11, 1e11, 3, 2e8, 2e8, 50, 2e8, 2e8, 50]
     
-    predict_index = 4
+    predict_index = 14
 
     run = MachineLearning()
     xgb = run.ML_main(data_min_list, data_max_list, predict_index)
 
-    d = [24129130727,26010784904,13488286,1275624]
+    d = [0, 0, 6e8, 6e8, 2, 6e8, 6e8, 2, 2e7, 2e7, 10, 2e7, 2e7, 10]
     X_test = []
     X_test.append(d)
     X_test = run.my_normalizer(X_test, data_min_list, data_max_list)
     pre = xgb.predict(X_test)
     print(pre)
-
-    predict_index = 5
-    run_5 = MachineLearning()
-    xgb_5 = run_5.ML_main(data_min_list, data_max_list, predict_index)
-    pre_5 = xgb_5.predict(X_test)
-    print(pre_5)
 
 
     
