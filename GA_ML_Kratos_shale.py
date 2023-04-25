@@ -919,12 +919,12 @@ class GA:
             data_max_list.insert(0, 15e6)
 
             #strength predictor
-            predict_index = 15
+            predict_index = 14
             run_ml_4 = MachineLearning()
             ML_xgb_4 = run_ml_4.ML_main(data_min_list, data_max_list, predict_index)
 
             #Young's modulus predictor
-            predict_index = 16
+            predict_index = 15
             run_ml_5 = MachineLearning()
             ML_xgb_5 = run_ml_5.ML_main(data_min_list, data_max_list, predict_index)
 
