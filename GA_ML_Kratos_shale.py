@@ -573,7 +573,9 @@ class GA:
         time_count = 0
         end_job_cnt = 0
         nodes_num = 10
-        while file_num != self.end_sim_file_num:
+        submited_job_cnt = 10
+        total_job_cnt = self.end_sim_file_num / nodes_num
+        while file_num != self.end_sim_file_num and submited_job_cnt < total_job_cnt:
             aim_path_and_folder = os.path.join(os.getcwd(),'kratos_results_data_temp')
             file_num = len(glob.glob1(aim_path_and_folder,"*.txt"))
             time.sleep(30)
@@ -592,7 +594,9 @@ class GA:
                         i += 1
                         cases_run_name = 'cases_run_' + str(i) + '.sh'
                         command_execution = 'sbatch kratos_results_data_temp/' + cases_run_name
-                        os.system(command_execution)
+                        if submited_job_cnt < total_job_cnt:
+                            os.system(command_execution)
+                        submited_job_cnt += 1
     
     def read_kratos_results_and_add_fitness(self, g_count, nextoff):
         
@@ -738,19 +742,36 @@ class GA:
         f_w.close()
         
         #plot and save
-        Young_mudulus_particle = str(best_individual['Gene'].data[0])
-        Young_mudulus_bond     = str(best_individual['Gene'].data[1])
-        sigma_max_bond         = str(best_individual['Gene'].data[2])
-        cohesion_ini_bond      = str(best_individual['Gene'].data[3])
+        strong_p_E      = str(best_individual['Gene'].data[0])
+        strong_b_E      = str(best_individual['Gene'].data[1])
+        strong_b_knks   = str(best_individual['Gene'].data[2])
+        weak_p_E        = str(best_individual['Gene'].data[3])
+        weak_b_E        = str(best_individual['Gene'].data[4])
+        weak_b_knks     = str(best_individual['Gene'].data[5])
+        strong_b_n_max  = str(best_individual['Gene'].data[6])
+        strong_b_t_max  = str(best_individual['Gene'].data[7])
+        strong_b_phi    = str(best_individual['Gene'].data[8])
+        weak_b_n_max    = str(best_individual['Gene'].data[9])
+        weak_b_t_max    = str(best_individual['Gene'].data[10])
+        weak_b_phi      = str(best_individual['Gene'].data[11])
 
-        from_folder_name = 'G' + str(g_count) + '_Ep' + Young_mudulus_particle + '_Eb' + Young_mudulus_bond\
-                        + '_Sig' + sigma_max_bond + '_Coh' + cohesion_ini_bond
-        to_folder_name = 'G_' + str(g_count)
-        self.log_export_file.write('Coping ' + from_folder_name + '\n')
-        #save the best individual case to results folder
-        from_directory = os.path.join(os.getcwd(),'Generated_kratos_cases', from_folder_name)
-        to_directory = os.path.join(os.getcwd(),'kratos_results_data', to_folder_name)
-        copy_tree(from_directory, to_directory)
+        for confining_pressure in self.confining_pressure_list:
+
+            for texture_angle in self.texture_angle_list:
+
+                #creat new folder
+                from_folder_name = 'G' + str(g_count) + '_' + str(confining_pressure) + '_' + str(texture_angle) + '_' \
+                                    + strong_p_E + '_' + strong_b_E + '_' + strong_b_knks + '_'\
+                                    + weak_p_E + '_' + weak_b_E + '_' + weak_b_knks + '_'\
+                                    + strong_b_n_max + '_' + strong_b_t_max + '_' + strong_b_phi + '_'\
+                                    + weak_b_n_max + '_' + weak_b_t_max + '_' + weak_b_phi
+
+                to_folder_name = 'G_' + str(g_count) + '_' + str(confining_pressure) + '_' + str(texture_angle)
+                self.log_export_file.write('Coping ' + from_folder_name + '\n')
+                #save the best individual case to results folder
+                from_directory = os.path.join(os.getcwd(),'Generated_kratos_cases', from_folder_name)
+                to_directory = os.path.join(os.getcwd(),'kratos_results_data', to_folder_name)
+                copy_tree(from_directory, to_directory)
     
     def final_clear_kratos_case_and_data_folder(self):
 
