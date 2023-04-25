@@ -272,6 +272,14 @@ class GA:
     
     def clear_old_out_files(self):
 
+        for item in os.listdir('.'):
+            if item.endswith(".err"):
+                os.remove(item)
+            elif item.endswith(".out"):
+                os.remove(item)
+
+    def clear_old_out_files(self):
+
         my_name = 'm'
 
         for f in os.listdir('.'):
