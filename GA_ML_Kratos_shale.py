@@ -271,7 +271,7 @@ class GA:
     
     def clear_old_out_files(self):
 
-        my_name = 'chengshun'
+        my_name = 'm'
 
         for f in os.listdir('.'):
             if any(x in f for x in my_name) and f.endswith('.out'):
@@ -433,8 +433,7 @@ class GA:
                                 if self.is_sh_head_write == False:
                                     f_w_cases_run.write('#!/bin/bash'+'\n')
                                     f_w_cases_run.write('#SBATCH --job-name=Generation_'+ str(g_count) + '_part_'+ str(self.sh_marker) +'\n')
-                                    f_w_cases_run.write('#SBATCH -o .\kratos_results_data_temp\chengshun_job%j.out'+'\n')
-                                    #f_w_cases_run.write('#SBATCH --output=kratos_results_data_temp\chengshun_job%j.out'+'\n')
+                                    f_w_cases_run.write('#SBATCH --output=m_chengshun_job%j.out'+'\n')
                                     #f_w_cases_run.write('#SBATCH --error =kratos_results_data_temp\chengshun_job%j.err'+'\n')
                                     f_w_cases_run.write('#SBATCH --partition='+ partition_name +'\n')
                                     f_w_cases_run.write('#SBATCH --ntasks-per-node='+str(nodes_num)+'\n')
@@ -557,8 +556,7 @@ class GA:
                                 if self.is_sh_head_write == False:
                                     f_w_cases_run.write('#!/bin/bash'+'\n')
                                     f_w_cases_run.write('#SBATCH --job-name=Generation_'+ str(g_count) + '_part_'+ str(self.sh_marker) +'\n')
-                                    f_w_cases_run.write('#SBATCH -o .\kratos_results_data_temp\chengshun_job%j.out'+'\n')
-                                    #f_w_cases_run.write('#SBATCH --output="kratos_results_data_temp\chengshun_job%j.out"'+'\n')
+                                    f_w_cases_run.write('#SBATCH --output=m_chengshun_job%j.out'+'\n')
                                     #f_w_cases_run.write('#SBATCH --error=chengshun_job%j.err'+'\n')
                                     f_w_cases_run.write('#SBATCH --partition='+ partition_name +'\n')
                                     f_w_cases_run.write('#SBATCH --ntasks-per-node='+str(nodes_num)+'\n')
