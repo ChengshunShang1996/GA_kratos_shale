@@ -868,18 +868,16 @@ class GA:
             self.log_export_file.flush()
 
             #check whether all the kratos cases in this generation finished
-            '''
             file_num = 0
             time_count = 0
             while file_num != self.end_sim_file_num:
                 aim_path_and_folder = os.path.join(os.getcwd(),'kratos_results_data_temp')
                 file_num = len(glob.glob1(aim_path_and_folder,"*.txt"))
                 time.sleep(30)
-                self.log_export_file.write('-----Waiting for kratos cases -----' + '\n')
+                #self.log_export_file.write('-----Waiting for kratos cases -----' + '\n')
                 time_count += 0.5
-                self.log_export_file.write('-------Generation {} cost {} min(s)-------'.format(g, time_count) + '\n')
-                self.log_export_file.flush()
-            '''
+                #self.log_export_file.write('-------Generation {} cost {} min(s)-------'.format(g, time_count) + '\n')
+                #self.log_export_file.flush()
 
             #add fitness to nextoff
             nextoff = self.read_kratos_results_and_add_fitness(g, nextoff)
