@@ -268,6 +268,14 @@ class GA:
             os.remove(log_output_path_and_name)
         log_export_file = open(log_output_path_and_name, 'a+')
         return log_export_file
+    
+    def clear_old_out_files(self):
+
+        my_name = 'chengshun'
+
+        for f in os.listdir('.'):
+            if any(x in f for x in my_name) and f.endswith('.out'):
+                os.remove(f)
 
     def uniquify(self, path, path_change_marker):
         filename, extension = os.path.splitext(path)
@@ -805,6 +813,7 @@ class GA:
  
             #clear old kratos case files and creat new one
             self.clear_old_and_creat_new_kratos_case_folder()
+            self.clear_old_out_files()
             
             self.log_export_file.write("############### Generation {} ###############".format(g) + '\n')
             self.log_export_file.flush()
