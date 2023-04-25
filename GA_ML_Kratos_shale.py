@@ -412,7 +412,7 @@ class GA:
                             nodes_num = 10
                             partition_name = 'HM'
                             self.end_sim_file_num += 1
-                            new_sh_marker = self.end_sim_file_num // nodes_num
+                            new_sh_marker = (self.end_sim_file_num - 1) // nodes_num
                             if new_sh_marker > self.sh_marker:
                                 self.sh_marker = new_sh_marker
                                 self.is_sh_head_write = False
@@ -425,8 +425,9 @@ class GA:
                                 if self.is_sh_head_write == False:
                                     f_w_cases_run.write('#!/bin/bash'+'\n')
                                     f_w_cases_run.write('#SBATCH --job-name=Generation_'+ str(g_count) + '_part_'+ str(self.sh_marker) +'\n')
-                                    f_w_cases_run.write('#SBATCH --output="kratos_results_data_temp\chengshun_job%j.out"'+'\n')
-                                    f_w_cases_run.write('#SBATCH --error ="kratos_results_data_temp\chengshun_job%j.err"'+'\n')
+                                    f_w_cases_run.write('#SBATCH -o .\kratos_results_data_temp\chengshun_job%j.out'+'\n')
+                                    #f_w_cases_run.write('#SBATCH --output=kratos_results_data_temp\chengshun_job%j.out'+'\n')
+                                    #f_w_cases_run.write('#SBATCH --error =kratos_results_data_temp\chengshun_job%j.err'+'\n')
                                     f_w_cases_run.write('#SBATCH --partition='+ partition_name +'\n')
                                     f_w_cases_run.write('#SBATCH --ntasks-per-node='+str(nodes_num)+'\n')
                                     f_w_cases_run.write('#SBATCH --nodes=1'+'\n'+'\n')
@@ -535,7 +536,7 @@ class GA:
                             nodes_num = 10
                             partition_name = 'HM'
                             self.end_sim_file_num += 1
-                            new_sh_marker = self.end_sim_file_num // nodes_num
+                            new_sh_marker = (self.end_sim_file_num - 1) // nodes_num
                             if new_sh_marker > self.sh_marker:
                                 self.sh_marker = new_sh_marker
                                 self.is_sh_head_write = False
@@ -548,8 +549,9 @@ class GA:
                                 if self.is_sh_head_write == False:
                                     f_w_cases_run.write('#!/bin/bash'+'\n')
                                     f_w_cases_run.write('#SBATCH --job-name=Generation_'+ str(g_count) + '_part_'+ str(self.sh_marker) +'\n')
-                                    f_w_cases_run.write('#SBATCH --output="kratos_results_data_temp\chengshun_job%j.out"'+'\n')
-                                    f_w_cases_run.write('#SBATCH --error="kratos_results_data_tempchengshun_job%j.err"'+'\n')
+                                    f_w_cases_run.write('#SBATCH -o .\kratos_results_data_temp\chengshun_job%j.out'+'\n')
+                                    #f_w_cases_run.write('#SBATCH --output="kratos_results_data_temp\chengshun_job%j.out"'+'\n')
+                                    #f_w_cases_run.write('#SBATCH --error=chengshun_job%j.err'+'\n')
                                     f_w_cases_run.write('#SBATCH --partition='+ partition_name +'\n')
                                     f_w_cases_run.write('#SBATCH --ntasks-per-node='+str(nodes_num)+'\n')
                                     f_w_cases_run.write('#SBATCH --nodes=1'+'\n'+'\n')
