@@ -6,6 +6,7 @@ import glob
 from distutils.dir_util import copy_tree
 import time
 import csv
+import math
 from MachineLearning import MachineLearning
  
 class Gene:
@@ -437,7 +438,7 @@ class GA:
                                     #f_w_cases_run.write('#SBATCH --error =kratos_results_data_temp\chengshun_job%j.err'+'\n')
                                     f_w_cases_run.write('#SBATCH --partition='+ partition_name +'\n')
                                     f_w_cases_run.write('#SBATCH --ntasks-per-node='+str(nodes_num)+'\n')
-                                    f_w_cases_run.write('#SBATCH --nodes=1'+'\n'+'\n')
+                                    #f_w_cases_run.write('#SBATCH --nodes=1'+'\n'+'\n')
                                     self.is_sh_head_write = True
                                 f_w_cases_run.write('cd '+ aim_path + '\n')
                                 f_w_cases_run.write('python3 '+ 'decompressed_material_triaxial_test_PBM_GA_230413.py' + '\n')
@@ -560,27 +561,33 @@ class GA:
                                     #f_w_cases_run.write('#SBATCH --error=chengshun_job%j.err'+'\n')
                                     f_w_cases_run.write('#SBATCH --partition='+ partition_name +'\n')
                                     f_w_cases_run.write('#SBATCH --ntasks-per-node='+str(nodes_num)+'\n')
-                                    f_w_cases_run.write('#SBATCH --nodes=1'+'\n'+'\n')
+                                    #f_w_cases_run.write('#SBATCH --nodes=1'+'\n'+'\n')
                                     self.is_sh_head_write = True
                                 f_w_cases_run.write('cd '+ aim_path + '\n')
                                 f_w_cases_run.write('python3 '+ 'MainKratos_230424.py' + '\n')
                             f_w_cases_run.close()
 
     def run_kratos_cases(self, g):
+
         self.log_export_file.write('Running kratos cases ...' + '\n')
         self.log_export_file.flush()
         #submit 10 jobs at begining
-        for i in range(0,10):
-            cases_run_name = 'cases_run_' + str(i) + '.sh'
-            command_execution = 'sbatch kratos_results_data_temp/' + cases_run_name
-            os.system(command_execution)
-
         file_num = 0
         time_count = 0
         end_job_cnt = 0
         nodes_num = 10
-        submited_job_cnt = 10
-        total_job_cnt = self.end_sim_file_num / nodes_num
+        max_index = 19
+        total_job_cnt = math.ceil(self.end_sim_file_num / nodes_num)
+        if max_index > total_job_cnt:
+            max_index = total_job_cnt
+
+        for i in range(0,max_index):
+            cases_run_name = 'cases_run_' + str(i) + '.sh'
+            command_execution = 'sbatch kratos_results_data_temp/' + cases_run_name
+            os.system(command_execution)
+        
+        submited_job_cnt = max_index
+        
         while file_num != self.end_sim_file_num and submited_job_cnt < total_job_cnt:
             aim_path_and_folder = os.path.join(os.getcwd(),'kratos_results_data_temp')
             file_num = len(glob.glob1(aim_path_and_folder,"*.txt"))
