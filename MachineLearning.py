@@ -32,9 +32,9 @@ class MachineLearning():
     def __init__(self) -> None:
 
         #read data file
-        data_file = 'G_info.csv' 
-        #file_name = 'G_info.csv' 
-        #data_file = os.path.join(os.getcwd(),'kratos_results_data', file_name)
+        #data_file = 'G_info.csv' 
+        file_name = 'G_info.csv' 
+        data_file = os.path.join(os.getcwd(),'kratos_results_data', file_name)
         self.df = pd.read_csv(data_file)
         print(self.df.info())
         #self.r_squared_list = []
