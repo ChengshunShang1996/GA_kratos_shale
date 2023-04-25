@@ -564,7 +564,7 @@ class GA:
         self.log_export_file.write('Running kratos cases ...' + '\n')
         self.log_export_file.flush()
         #submit 10 jobs at begining
-        for i in range(1,11):
+        for i in range(0,10):
             cases_run_name = 'cases_run_' + str(i) + '.sh'
             command_execution = 'sbatch kratos_results_data_temp/' + cases_run_name
             os.system(command_execution)
