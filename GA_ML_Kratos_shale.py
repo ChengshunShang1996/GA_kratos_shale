@@ -271,7 +271,7 @@ class GA:
         log_export_file = open(log_output_path_and_name, 'a+')
         return log_export_file
     
-    def clear_old_out_files(self):
+    def clear_old_out_and_err_files(self):
 
         for item in os.listdir('.'):
             if item.endswith(".err"):
@@ -829,7 +829,7 @@ class GA:
  
             #clear old kratos case files and creat new one
             self.clear_old_and_creat_new_kratos_case_folder()
-            self.clear_old_out_files()
+            self.clear_old_out_and_err_files()
             
             self.log_export_file.write("############### Generation {} ###############".format(g) + '\n')
             self.log_export_file.flush()
@@ -1000,7 +1000,7 @@ class GA:
         self.log_export_file.close()
  
 if __name__ == "__main__":
-    CXPB, MUTPB, NGEN, popsize = 0.8, 0.2, 3, 12  # popsize must be even number
+    CXPB, MUTPB, NGEN, popsize = 0.8, 0.2, 300, 200  # popsize must be even number
     #aim_strength, aim_young_modulus = 4.323e7, 5.54e9
     #aim_strain = 1.01265
 
