@@ -444,7 +444,7 @@ class GA:
                                     f_w_cases_run.write('#!/bin/bash'+'\n')
                                     f_w_cases_run.write('#SBATCH --job-name=Generation_'+ str(g_count) + '_part_'+ str(self.sh_marker) +'\n')
                                     f_w_cases_run.write('#SBATCH --output=m_chengshun_job%j.out'+'\n')
-                                    f_w_cases_run.write('#SBATCH --error =m_kratos_results_data_temp\chengshun_job%j.err'+'\n')
+                                    f_w_cases_run.write('#SBATCH --error =m_chengshun_job%j.err'+'\n')
                                     f_w_cases_run.write('#SBATCH --partition='+ partition_name +'\n')
                                     f_w_cases_run.write('#SBATCH --ntasks-per-node='+str(nodes_num)+'\n')
                                     #f_w_cases_run.write('#SBATCH --nodes=1'+'\n'+'\n')
