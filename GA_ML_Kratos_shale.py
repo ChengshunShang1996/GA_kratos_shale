@@ -585,7 +585,7 @@ class GA:
         time_count = 0
         end_job_cnt = 0
         nodes_num = 10
-        max_index = 19
+        max_index = 13
         total_job_cnt = math.ceil(self.end_sim_file_num / nodes_num)
         if max_index > total_job_cnt:
             max_index = total_job_cnt
