@@ -18,4 +18,4 @@
 ########### Further details -> man sbatch ##########
 #export OMP_NUM_THREADS=4
 
-python3 GA_ML_Kratos_shale_step2.py
+python3 GA_ML_Kratos_shale_step2_creat.py
