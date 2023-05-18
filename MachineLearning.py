@@ -33,13 +33,19 @@ class MachineLearning():
 
         #read data file
         #data_file = 'G_info.csv' 
+        '''
         file_name = 'G_info.csv' 
         data_file = os.path.join(os.getcwd(),'kratos_results_data', file_name)
         self.df = pd.read_csv(data_file)
-        print(self.df.info())
+        '''
+        #print(self.df.info())
         #self.r_squared_list = []
 
     def data_processing(self, data_min_list, data_max_list, predict_index):
+        
+        file_name = 'G' + str(self.g_count) + '_info.csv'  
+        data_file = os.path.join(os.getcwd(),'kratos_results_data', file_name)
+        self.df = pd.read_csv(data_file)
         
         #data processing
         self.df = self.df[self.df.strength_max != 0]   #delete 0.0 data rows
@@ -161,8 +167,9 @@ class MachineLearning():
         plt.show()
         #self.r_squared_list.append(metrics.r2_score(Y_test, pre))
     
-    def ML_main(self, data_min_list, data_max_list, predict_index):
+    def ML_main(self, data_min_list, data_max_list, predict_index, g_count):
 
+        self.g_count = g_count
         X_train, Y_train, X_test, Y_test = self.data_processing(data_min_list, data_max_list, predict_index)
         xgb = self.xgboost_model_training(X_train, Y_train, X_test, Y_test)
 
