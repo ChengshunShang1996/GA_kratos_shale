@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=GA_XGBoost_Controller_Hola_Barcelona_step2
+#SBATCH --job-name=GA_XGBoost_Controller_Hola_Barcelona_step3
 #SBATCH --output=GA_XGBoost_Controller%j.out
 #SBATCH --error=GA_XGBoost_Controller%j.err
 #SBATCH --partition=R182-open
