@@ -76,7 +76,7 @@ class GA:
         f_r.close()
         
         self.pop = pop
-        self.bestindividual = bestindividual_read  # store the best chromosome in the population
+        self.bestindividual = bestindividual_read[0]  # store the best chromosome in the population
         
         self.aim_strength = parameter[6]
         self.aim_young_modulus = parameter[7]
@@ -281,7 +281,7 @@ class GA:
 
         best_ind = self.selectBest(self.pop)
 
-        if best_ind['fitness'] > self.bestindividual[0]['fitness']:
+        if best_ind['fitness'] > self.bestindividual['fitness']:
             self.bestindividual = best_ind
             # save the data of the best individual for post processing
             self.save_and_plot_best_individual_results(self.g, self.bestindividual)

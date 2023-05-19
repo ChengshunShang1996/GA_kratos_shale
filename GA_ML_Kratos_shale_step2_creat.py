@@ -48,7 +48,10 @@ class GA:
         pop = []
         bestindividual_read = []
 
-        pop_file_name = "G" + str(g) + "_pop.txt"
+        if g == 1:
+            pop_file_name = "G" + str(g-1) + "_pop.txt"
+        else:
+            pop_file_name = "G" + str(g) + "_pop.txt"
         pop_file_path = os.path.join(os.getcwd(),'kratos_results_data', pop_file_name)
 
         if g == 0:
@@ -309,6 +312,22 @@ class GA:
                         + ' ' + str(indiv_['Gene'].data[6]) + ' ' + str(indiv_['Gene'].data[7])+ ' ' + str(indiv_['Gene'].data[8]) \
                         + ' ' + str(indiv_['Gene'].data[9]) + ' ' + str(indiv_['Gene'].data[10])+ ' ' + str(indiv_['Gene'].data[11]) +'\n')
         f_w.close()
+
+    def add_pop_end_to_current_pop(self, g):
+        
+        if g == 1: 
+            pop_file_name = "G" + str(g-1) + "_pop.txt"
+        else:
+            pop_file_name = "G" + str(g) + "_pop.txt"
+        pop_file_path = os.path.join(os.getcwd(),'kratos_results_data', pop_file_name)
+
+        pop_end_file_name = "G" + str(g) + "_pop_end.txt"
+        pop_end_file_path = os.path.join(os.getcwd(),'kratos_results_data', pop_end_file_name)
+
+        with open(pop_end_file_path) as f_r:
+            with open(pop_file_path, "a+") as f_w:
+                for line in f_r:
+                    f_w.write(line)
 
     def uniquify(self, path, path_change_marker):
         filename, extension = os.path.splitext(path)
@@ -650,7 +669,29 @@ class GA:
                         nextoff.append({'Gene': crossoff2})
                 else:
                     nextoff.extend(offspring)
-            self.save_next_pop_into_file(g, nextoff)         
+            self.save_next_pop_into_file(g, nextoff)
+            self.add_pop_end_to_current_pop(g)
+            #the predicted best individual by inside GA are added to the population
+            newoff1_add = Gene(data=[])  # offspring1 produced by cross operation
+            newoff2_add = Gene(data=[])  # offspring2 produced by cross operation
+
+            pop_end = []
+            pop_end_file_name = "G" + str(g) + "_pop_end.txt"
+            pop_end_file_path = os.path.join(os.getcwd(),'kratos_results_data', pop_end_file_name)
+
+            with open(pop_end_file_path, "r") as f_r:
+                for line in f_r:
+                    geneinfo = []
+                    values = [float(s) for s in line.split()]
+                    for cnt in range(0,12):
+                        geneinfo.append(values[cnt])
+                    pop_end.append({'Gene': Gene(data=geneinfo), 'fitness': 0.0})     
+            f_r.close()
+
+            newoff1_add.data = pop_end[0]['Gene'].data
+            newoff2_add.data = pop_end[1]['Gene'].data
+            nextoff.append({'Gene': newoff1_add})
+            nextoff.append({'Gene': newoff2_add})         
         else:
             nextoff = self.pop
 

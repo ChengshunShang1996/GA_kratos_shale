@@ -73,7 +73,7 @@ class GA:
         f_r.close()
         
         self.pop = pop
-        self.bestindividual = bestindividual_read  # store the best chromosome in the population
+        self.bestindividual = bestindividual_read[0]  # store the best chromosome in the population
 
         self.aim_strength = parameter[6]
         self.aim_young_modulus = parameter[7]
@@ -257,6 +257,7 @@ class GA:
 
         for g_in in range(NGEN):
 
+            print("############### Inside Generation {} ###############".format(g_in) + '\n')
             #self.log_export_file.write("############### Inside Generation {} ###############".format(g_in) + '\n')
             #self.log_export_file.flush()
 
@@ -292,10 +293,10 @@ class GA:
 
             self.best_ind_in = self.selectBest(self.pop_in)
 
-            if self.best_ind_in['fitness'] > self.bestindividual_in[0]['fitness']:
+            if self.best_ind_in['fitness'] > self.bestindividual_in['fitness']:
                 self.bestindividual_in = self.best_ind_in
 
-        pop_file_name = "G" + str(self.g + 1) + "_pop.txt"
+        pop_file_name = "G" + str(self.g + 1) + "_pop_end.txt"
         pop_file_path = os.path.join(os.getcwd(),'kratos_results_data', pop_file_name)
 
         with open(pop_file_path, "a+") as f_w:
@@ -312,7 +313,7 @@ class GA:
         f_w.close()
             
 if __name__ == "__main__":
-    CXPB, MUTPB, NGEN, popsize = 0.8, 0.2, 300, 200  # popsize must be even number
+    CXPB, MUTPB, NGEN, popsize = 0.8, 0.2, 10, 200  # popsize must be even number
     #aim_strength, aim_young_modulus = 4.323e7, 5.54e9
     #aim_strain = 1.01265
 
