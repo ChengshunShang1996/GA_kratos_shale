@@ -292,7 +292,7 @@ class GA:
 
             self.best_ind_in = self.selectBest(self.pop_in)
 
-            if self.best_ind_in['fitness'] > self.bestindividual_in['fitness']:
+            if self.best_ind_in['fitness'] > self.bestindividual_in[0]['fitness']:
                 self.bestindividual_in = self.best_ind_in
 
         pop_file_name = "G" + str(self.g + 1) + "_pop.txt"

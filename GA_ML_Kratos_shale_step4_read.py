@@ -278,7 +278,7 @@ class GA:
 
         best_ind = self.selectBest(self.pop)
 
-        if best_ind['fitness'] > self.bestindividual['fitness']:
+        if best_ind['fitness'] > self.bestindividual[0]['fitness']:
             self.bestindividual = best_ind
             # save the data of the best individual for post processing
             self.save_and_plot_best_individual_results(self.g, self.bestindividual)

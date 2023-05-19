@@ -450,7 +450,7 @@ class GA:
 
                         # write the cases_run.sh
                         if aim_path_change_marker == 0:
-                            nodes_num = 10
+                            nodes_num = 16
                             #partition_name_list = ['B510','HM','HighParallelization','R182-open']
                             partition_name_list = ['B510','HM','R182-open']
                             partition_name = random.choice(partition_name_list)
@@ -575,7 +575,7 @@ class GA:
 
                         # write the cases_run.sh
                         if aim_path_change_marker == 0:
-                            nodes_num = 10
+                            nodes_num = 16
                             #partition_name_list = ['B510','HM','HighParallelization','R182-open']
                             partition_name_list = ['B510','HM','R182-open']
                             partition_name = random.choice(partition_name_list)

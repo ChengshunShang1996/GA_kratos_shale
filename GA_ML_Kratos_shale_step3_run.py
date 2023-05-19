@@ -14,12 +14,12 @@ class GA:
 
     def run_kratos_cases(self):
 
-        #submit 10 jobs at begining
+        #submit 30 jobs at begining
         file_num = 0
         time_count = 0
         end_job_cnt = 0
-        nodes_num = 10
-        max_index = 30
+        nodes_num = 16
+        max_index = 20
         total_job_cnt = math.ceil(self.end_sim_file_num / nodes_num)
         if max_index > total_job_cnt:
             max_index = total_job_cnt
