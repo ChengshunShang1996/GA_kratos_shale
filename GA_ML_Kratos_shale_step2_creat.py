@@ -471,7 +471,7 @@ class GA:
                         if aim_path_change_marker == 0:
                             nodes_num = 16
                             #partition_name_list = ['B510','HM','HighParallelization','R182-open']
-                            partition_name_list = ['B510','HM','R182-open']
+                            partition_name_list = ['HM','R182-open']
                             partition_name = random.choice(partition_name_list)
                             self.end_sim_file_num += 1
                             new_sh_marker = (self.end_sim_file_num - 1) // nodes_num
@@ -596,7 +596,7 @@ class GA:
                         if aim_path_change_marker == 0:
                             nodes_num = 16
                             #partition_name_list = ['B510','HM','HighParallelization','R182-open']
-                            partition_name_list = ['B510','HM','R182-open']
+                            partition_name_list = ['HM','R182-open']
                             partition_name = random.choice(partition_name_list)
                             self.end_sim_file_num += 1
                             new_sh_marker = (self.end_sim_file_num - 1) // nodes_num
@@ -634,7 +634,7 @@ class GA:
  
         #clear old kratos case files and creat new one
         self.clear_old_and_creat_new_kratos_case_folder()
-        #self.clear_old_out_and_err_files()
+        self.clear_old_out_and_err_files()
         self.clear_old_out_files()
 
         g = self.g
