@@ -115,6 +115,9 @@ class GA:
             output_file_name = 'G' + str(g_count) + '_info.csv' 
             output_aim_path_and_name = os.path.join(os.getcwd(),'kratos_results_data', output_file_name)
 
+            if os.path.exists(output_aim_path_and_name):
+                os.remove(output_aim_path_and_name)
+
             indiv_data_head = ['confining_pressure','texture_angle','strong_p_E', 'strong_b_E', 'strong_b_knks', \
                                'weak_p_E', 'weak_b_E', 'weak_b_knks', 'strong_b_n_max', 'strong_b_t_max', \
                                 'strong_b_phi', 'weak_b_n_max', 'weak_b_t_max', 'weak_b_phi', 'strength_max', 'young_modulus_max']
