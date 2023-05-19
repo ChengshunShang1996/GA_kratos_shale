@@ -8,7 +8,7 @@ class GA:
     This is a class of GA algorithm.
     """
  
-    def __init__(self, parameter):
+    def __init__(self):
         
         self.end_sim_file_num = 1800
 
