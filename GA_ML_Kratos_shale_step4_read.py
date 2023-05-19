@@ -93,6 +93,17 @@ class GA:
     
     def read_kratos_results_and_add_fitness(self, g_count, nextoff):
         
+        #write out individual data for ML
+        output_file_name = 'G' + str(g_count) + '_info.csv' 
+        output_aim_path_and_name = os.path.join(os.getcwd(),'kratos_results_data', output_file_name)
+
+        if os.path.exists(output_aim_path_and_name):
+            os.remove(output_aim_path_and_name)
+
+        indiv_data_head = ['confining_pressure','texture_angle','strong_p_E', 'strong_b_E', 'strong_b_knks', \
+                            'weak_p_E', 'weak_b_E', 'weak_b_knks', 'strong_b_n_max', 'strong_b_t_max', \
+                            'strong_b_phi', 'weak_b_n_max', 'weak_b_t_max', 'weak_b_phi', 'strength_max', 'young_modulus_max']
+            
         for indiv_ in nextoff:
 
             strong_p_E      = str(indiv_['Gene'].data[0])
@@ -110,17 +121,6 @@ class GA:
 
             rel_error_strength = rel_error_young_modulus = 0.0
             aim_value_index_i = aim_value_index_j = 0
-
-            #write out individual data for ML
-            output_file_name = 'G' + str(g_count) + '_info.csv' 
-            output_aim_path_and_name = os.path.join(os.getcwd(),'kratos_results_data', output_file_name)
-
-            if os.path.exists(output_aim_path_and_name):
-                os.remove(output_aim_path_and_name)
-
-            indiv_data_head = ['confining_pressure','texture_angle','strong_p_E', 'strong_b_E', 'strong_b_knks', \
-                               'weak_p_E', 'weak_b_E', 'weak_b_knks', 'strong_b_n_max', 'strong_b_t_max', \
-                                'strong_b_phi', 'weak_b_n_max', 'weak_b_t_max', 'weak_b_phi', 'strength_max', 'young_modulus_max']
 
             for confining_pressure in self.confining_pressure_list:
 
