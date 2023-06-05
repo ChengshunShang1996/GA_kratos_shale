@@ -172,7 +172,10 @@ class GA:
                                 if strain_data > 0.3 * strain_max and strain_data < 0.5 * strain_max:
                                     young_select_sum += young_data_list[strain_data_list.index(strain_data)]
                                     young_cnt += 1
-                            young_modulus_max = young_select_sum / young_cnt
+                            if young_cnt != 0.0:
+                                young_modulus_max = young_select_sum / young_cnt
+                            else:
+                                young_modulus_max = max(young_data_list)
                         else:
                             young_modulus_max = max(young_data_list)
 
